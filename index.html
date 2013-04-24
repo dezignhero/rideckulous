@@ -15,27 +15,29 @@
 </head>
 <body onload="setTimeout(function() { window.scrollTo(0, 1) }, 100);">
 
-<div class="wrapper">
-	<div class="page">
-		home
-	</div>
-	<div class="page">
-		home
-	</div>
-	<div class="page">
-		home
-	</div>
-	<div class="page">
-		home
-	</div>
-	<div class="page">
-		home
-	</div>
-</div>
+<ul id="Pages" class="wrapper">
+	<li class="page">
+		Page 1
+	</li>
+	<li class="page">
+		Page 2
+	</li>
+	<li class="page">
+		Page 3
+	</li>
+	<li class="page">
+		Page 4
+	</li>
+	<li class="page">
+		Page 5
+	</li>
+</ul>
 
 <!--Scripts-->
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 <script src="rideckulous.js"></script>
-
+<script>
+	var d = new Deck('#Pages');
+</script>
 </body>
 </html>
