@@ -26,9 +26,8 @@ var Deck = function(selector, options) {
 	
 	var el = selector,
 		parent = $(el),
-		container = $('.slides', el),
-		controls = $('.control', el),
-		cards = $('.page', el);
+		cards = $('.page', el),
+		controls = $('.control');
 	
 	/*------- Methods -------*/
 
@@ -78,13 +77,13 @@ var Deck = function(selector, options) {
 		});
 
 		// Swiping
-		cards[0].addEventListener('touchstart', function(e) { touchStart(e); }, false);
-		cards[0].addEventListener('touchmove', function(e) { touchMove(e); }, false);
-		cards[0].addEventListener('touchend', function(e) { touchEnd(e); }, false);
+		parent[0].addEventListener('touchstart', function(e) { touchStart(e); }, false);
+		parent[0].addEventListener('touchmove', function(e) { touchMove(e); }, false);
+		parent[0].addEventListener('touchend', function(e) { touchEnd(e); }, false);
 		// Desktop
-		cards[0].addEventListener('mousedown', function(e) { touchStart(e); }, false);
-		cards[0].addEventListener('mousemove', function(e) { if(e.which==1) { touchMove(e); } }, false);
-		cards[0].addEventListener('mouseup', function(e) { touchEnd(e); }, false);
+		parent[0].addEventListener('mousedown', function(e) { touchStart(e); }, false);
+		parent[0].addEventListener('mousemove', function(e) { if(e.which==1) { touchMove(e); } }, false);
+		parent[0].addEventListener('mouseup', function(e) { touchEnd(e); }, false);
 
 		// Orientation Change
 		var supportsOrientationChange = "onorientationchange" in window,
@@ -108,7 +107,6 @@ var Deck = function(selector, options) {
 
 	touchStart = function(e) {
 		swipe.started = true;
-		swipe.At = getPosition();  // for touch move
 		// Get start point
 		swipe.startX = e.touches ? e.touches[0].pageX : e.pageX;
 		swipe.startY = e.touches ? e.touches[0].pageY : e.pageY;
@@ -136,8 +134,9 @@ var Deck = function(selector, options) {
 			} else {
 				goTo = currentSlide;
 			}
-			
-			// Jump to closest        
+
+			// Jump to closest
+			console.log(goTo);
 			jumpToSlide(goTo, 0.15);
 		}
 	},
@@ -156,24 +155,16 @@ var Deck = function(selector, options) {
 			e.preventDefault();
 
 			// Always run this so that hit the ends
-			animate(swipe.At+dX,'none');
+			animate(dX,'none');
 		}
-	},
-
-	getPosition = function() {
-		// Get current point and Stay there
-		var style = document.defaultView.getComputedStyle(cards[0], null);
-		var transform = new WebKitCSSMatrix(style.webkitTransform);
-
-		// Return position based on direction
-		return transform.m41;
 	},
 	
 	animate = function(scrollTo, ease) {
 		// Momentum Effect or Not
 		var transition = (ease!='none') ? 'all '+ease+'s ease-out' : 'none';
-		cards[0].style.webkitTransition = transition;
-		cards[0].style.webkitTransform = 'translate3d('+scrollTo+'px,0,0)';
+		var card = ( scrollTo < 0 ) ? card = $('.page.current') : $('.page.top');
+		card[0].style.webkitTransition = transition;
+		card[0].style.webkitTransform = 'translate3d('+scrollTo+'px,0,0)';
 
 		// Allow animating again
 		window.setTimeout(function(){
