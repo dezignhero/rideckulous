@@ -116,11 +116,11 @@ var Deck = function(selector, options) {
 			var moved = swipe.endX - swipe.startX;
 
 			// Figure out closest slide
-			if(moved > 0 && moved > viewportWidth/3) {
+			if(moved > 0 && moved > viewportWidth/4) {
 				if(currentCard > 0) {
 					goTo = currentCard - 1;
 				}
-			} else if(moved < 0 && moved < -viewportWidth/3) {
+			} else if(moved < 0 && moved < -viewportWidth/4) {
 				if(currentCard < numSlides-1) {
 					goTo = currentCard + 1;
 				}
