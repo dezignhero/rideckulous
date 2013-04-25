@@ -185,6 +185,10 @@ var Deck = function(selector, options) {
 
 			if(num == currentCard) {
 				animate(cc, 0, easeAmt);
+				var tc = $(cards.selector+'.top');
+				if(tc.length>0) {
+					animate(tc, -viewportWidth, easeAmt);
+				}
 			} else {
 				var nc = $(cards.selector+'[data-id='+num+']');
 
@@ -208,8 +212,6 @@ var Deck = function(selector, options) {
 
 			// Control Buttons
 			updateControls();
-
-			console.log(num);
 		}
 	},
 

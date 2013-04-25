@@ -25,4 +25,7 @@ h1 { font-size: 72px; margin-bottom: 0; }
 
 
 .page { position: absolute; top: 2%; left: 2%; width: 96%; height: 96%; border: 1px solid #222; margin: -1px; background: #eee; text-align: center; }
-.page.current { width: 100%; height: 100%; top: 0; left: 0; }
+.page.current,
+.page.top { width: 100%; height: 100%; }
+.page.current { top: 0; left: 0; }
+.page.top { top: 0; left: 0; }
