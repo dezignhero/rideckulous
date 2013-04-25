@@ -151,7 +151,8 @@ var Deck = function(selector, options) {
 			// Always run this so that hit the ends
 			var card = ( dX <= 0 ) ? $('.page.current') : $('.page.top');
 			if ( card.length > 0 ) {
-				animate(card, dX,'none');
+				dX = ( card.hasClass('top') ) ? dX-viewportWidth : dX;
+				animate(card, dX, 'none');
 			}
 		}
 	},
