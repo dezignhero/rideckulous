@@ -6,14 +6,14 @@ var Deck = function(selector, options) {
 		animating = false,
 		numSlides = 0,
 		goTo = 0,
-		currentSlide = 0;
+		currentSlide = 0,
+		lastSlide = 0;
 
 	// Swiping
 	var swipe = {
 		started : false,
 		startX : 0,
-		endX : 0,
-		At : 0
+		endX : 0
 	};
 
 	// Defaults
