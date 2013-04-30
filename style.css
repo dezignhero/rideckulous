@@ -4,7 +4,7 @@ html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, blockquot
 table { border-collapse: collapse; border-spacing: 0; }
 
 /* ----- CSS ----- */
-body { font-family: 'Ubuntu', sans-serif; font-size: 16px; color: #222; line-height: 1.4; }
+body { font-family: 'Ubuntu', sans-serif; font-size: 16px; color: #222; line-height: 1.4; background: #4c4c4c; }
 li { list-style: none; }
 a { color: #007bcd; text-decoration: none; }
 a:hover { color: #009bff; }
@@ -24,7 +24,7 @@ h1 { font-size: 72px; margin-bottom: 0; }
 .fr { float: right; }
 
 
-.page { position: absolute; top: 0; left: 0; width: 100%; height: 100%; margin: -1px; border: 1px solid #222; margin: -1px; background: #eee; text-align: center; transform: scale(0.96,0.96); -ms-transform: scale(0.96,0.96); /* IE 9 */ -webkit-transform: scale(0.96,0.96); /* Safari and Chrome */ }
+.page { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #999; text-align: center; transform: scale(0.96,0.96); -ms-transform: scale(0.96,0.96); /* IE 9 */ -webkit-transform: scale(0.96,0.96); /* Safari and Chrome */ }
 .page.current,
-.page.top { transform: scale(1,1); -ms-transform: scale(1,1); /* IE 9 */ -webkit-transform: scale(1,1); /* Safari and Chrome */}
+.page.top { transform: scale(1,1); -ms-transform: scale(1,1); /* IE 9 */ -webkit-transform: scale(1,1); /* Safari and Chrome */ background: #fff; }
 
