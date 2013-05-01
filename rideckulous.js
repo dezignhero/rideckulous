@@ -186,9 +186,9 @@ var Deck = function(selector, options) {
 			if ( num == currentCard ) {
 				console.log('current');
 				animate($cc, 0, easeAmt);
-				var $tc = $($cards.selector+'.last');
-				if ( $tc.length > 0 ) {
-					animate($tc, -viewportWidth, easeAmt);
+				var $lc = $($cards.selector+'.last');
+				if ( $lc.length > 0 ) {
+					animate($lc, -viewportWidth, easeAmt);
 				}
 			} else {
 				var $nc = $($cards.selector+'[data-id='+num+']');
