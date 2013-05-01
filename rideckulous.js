@@ -66,7 +66,7 @@ var Deck = function(selector, options) {
 				}
 
 				// Move container
-				jumpToSlide(goTo);
+				jumpTo(goTo);
 			}
 		});
 
@@ -85,7 +85,7 @@ var Deck = function(selector, options) {
 
 		window.addEventListener(orientationEvent, function() {
 			resize(function(){
-				jumpToSlide(currentCard);
+				jumpTo(currentCard);
 			});
 		}, false);
 	},
@@ -130,7 +130,7 @@ var Deck = function(selector, options) {
 			}
 
 			// Jump to closest
-			jumpToSlide(goTo, 0.15);
+			jumpTo(goTo, 0.15);
 		}
 	},
 	
@@ -172,7 +172,7 @@ var Deck = function(selector, options) {
 		return $card;
 	},
 
-	jumpToSlide = function(num, ease) {
+	jumpTo = function(num, ease) {
 		// Keep within range
 		if(num >= 0 && num < numSlides) {
 
@@ -181,30 +181,35 @@ var Deck = function(selector, options) {
 			animating = true;
 
 			// Determine how to move slides
-			var cc = $($cards.selector+'[data-id='+currentCard+']');
+			var $cc = $($cards.selector+'[data-id='+currentCard+']');
 
 			if ( num == currentCard ) {
-				animate(cc, 0, easeAmt);
-				var tc = $($cards.selector+'.last');
-				if ( tc.length > 0 ) {
-					animate(tc, -viewportWidth, easeAmt);
+				console.log('current');
+				animate($cc, 0, easeAmt);
+				var $tc = $($cards.selector+'.last');
+				if ( $tc.length > 0 ) {
+					animate($tc, -viewportWidth, easeAmt);
 				}
 			} else {
-				var nc = $($cards.selector+'[data-id='+num+']');
+				var $nc = $($cards.selector+'[data-id='+num+']');
+				
+				// Reset classes
+				$cards.removeClass('current last next');
 
 				// How to move slides in
 				if ( num > currentCard ) {  // below current card
-					animate(cc, -viewportWidth, easeAmt);
-					
-					$cards.removeClass('current').removeClass('last');
-					nc.addClass('current');
-					cc.addClass('last');
+					console.log('next');
+					animate($cc, -viewportWidth, easeAmt);
+
+					$nc.addClass('current');
+					$cc.addClass('last');
 				} else {  // above current card
-					animate(nc, -viewportWidth, 'none');
-					animate(nc, 0, easeAmt);
+					console.log('last');
+					animate($nc, -viewportWidth, 'none');
+					animate($nc, 0, easeAmt);
 					
-					$cards.removeClass('current');
-					nc.removeClass('last').addClass('current');
+					$nc.addClass('current');
+					$cc.addClass('next');
 				}
 				// Update current slide
 				currentCard = num;
@@ -237,7 +242,7 @@ var Deck = function(selector, options) {
 
 		element : $parent,
 
-		jumpToSlide : jumpToSlide,
+		jumpTo : jumpTo,
 
 		current : function() {
 			return currentCard+1;
@@ -246,11 +251,11 @@ var Deck = function(selector, options) {
 		total : numSlides,
 
 		next : function() {
-			jumpToSlide(currentCard+1);
+			jumpTo(currentCard+1);
 		},
 
 		prev : function() {
-			jumpToSlide(currentCard-1);  
+			jumpTo(currentCard-1);  
 		}
 	};
 

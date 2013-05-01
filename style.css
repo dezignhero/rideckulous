@@ -4,7 +4,7 @@ html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, blockquot
 table { border-collapse: collapse; border-spacing: 0; }
 
 /* ----- CSS ----- */
-body { font-family: 'Ubuntu', sans-serif; font-size: 16px; color: #222; line-height: 1.4; background: #4c4c4c; }
+body { font-family: 'Arial', sans-serif; font-size: 16px; color: #222; line-height: 1.4; background: #4c4c4c; }
 li { list-style: none; }
 a { color: #007bcd; text-decoration: none; }
 a:hover { color: #009bff; }
@@ -24,8 +24,11 @@ h1 { font-size: 72px; margin-bottom: 0; }
 .fr { float: right; }
 
 
-.page { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #999; text-align: center; transform: scale(0.96,0.96); -ms-transform: scale(0.96,0.96); /* IE 9 */ -webkit-transform: scale(0.96,0.96); /* Safari and Chrome */ }
+.page { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #999; text-align: center; }
+.page,
+.page.next { transform: scale(0.96,0.96); -ms-transform: scale(0.96,0.96); /* IE 9 */ -webkit-transform: scale(0.96,0.96); /* Safari and Chrome */ }
 .page.current,
-.page.last { transform: scale(1,1); -ms-transform: scale(1,1); /* IE 9 */ -webkit-transform: scale(1,1); /* Safari and Chrome */ background: #fff; z-index: 10; }
+.page.last { transform: scale(1,1); -ms-transform: scale(1,1); /* IE 9 */ -webkit-transform: scale(1,1); /* Safari and Chrome */ background: #eee; z-index: 10; }
 .page.last { z-index: 11; }
 .page.next { z-index: 9; }
+	.page span { font-size: 400px; line-height: 400px; width: 200px; height: 400px; display: block; position: absolute; top: 50%; left: 50%; margin: -200px 0 0 -100px; text-shadow: 0px 2px 2px #fff; color: rgba(0,0,0,0.5); }
