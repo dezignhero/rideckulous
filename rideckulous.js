@@ -107,34 +107,6 @@ var Deck = function(selector, options) {
 		swipe.endX = swipe.startX;  // prevent click swiping when touchMove doesn't fire
 	},
 	
-	touchEnd = function(e) {
-		swipe.started = false;
-
-		// Nullify event
-		e.preventDefault();
-
-		if ( !animating ) {
-			var moved = swipe.endX - swipe.startX,
-				threshold = viewportWidth/4;
-
-			// Figure out closest slide
-			if ( moved > threshold ) {
-				if ( currentCard > 0 ) {
-					goTo = currentCard - 1;
-				}
-			} else if ( moved < -threshold ) {
-				if ( currentCard < numSlides-1 ) {
-					goTo = currentCard + 1;
-				}
-			} else {
-				goTo = currentCard;
-			}
-
-			// Jump to closest
-			jumpTo(goTo, 0.15);
-		}
-	},
-	
 	touchMove = function(e) {
 		if ( swipe.started ) {
 			var touchX = e.touches ? e.touches[0].pageX : e.pageX,
@@ -147,18 +119,51 @@ var Deck = function(selector, options) {
 			// Escape if motion wrong
 			if ( Math.abs(dX) < Math.abs(dY) ) return true;
 
+			// Prevent default event
 			e.preventDefault();
 
 			// Always run this so that hit the ends
-			var $card = ( dX <= 0 ) ? $('.page.current') : $('.page.last');
-			if ( $card.length > 0 ) {
-				dX = ( $card.hasClass('last') ) ? dX-viewportWidth : dX;
-				animate($card, dX, 'none');
+			var $cc = $('.page.current'),
+				$lc = $('.page.last');
+			
+			if ( dX <= 0 ) {
+				animate($cc, dX, 'none');
+				animate($lc, -viewportWidth, 'none');  // lock other card in place
+			} else {
+				animate($lc, dX-viewportWidth, 'none');
+				animate($cc, 0, 'none');
 			}
+		}
+	},
+
+	touchEnd = function(e) {
+		swipe.started = false;
+
+		// Nullify event
+		e.preventDefault();
+
+		if ( !animating ) {
+			var moved = swipe.endX - swipe.startX,
+				threshold = viewportWidth/4;
+
+			// Figure out closest slide
+			if ( moved > threshold && currentCard > 0 ) {
+				goTo = currentCard - 1;
+			} else if ( moved < -threshold && currentCard < numSlides-1 ) {
+				goTo = currentCard + 1;
+			} else {
+				goTo = currentCard;
+			}
+
+			// Jump to closest
+			jumpTo(goTo, 0.15);
 		}
 	},
 	
 	animate = function($card, scrollTo, ease) {
+		// Check if card exists
+		if ( $card.length == 0 ) return;
+		
 		// Momentum Effect or Not
 		var transition = ( ease != 'none' ) ? 'all '+ease+'s ease-out' : 'none';
 
