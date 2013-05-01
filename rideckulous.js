@@ -184,7 +184,6 @@ var Deck = function(selector, options) {
 			var $cc = $($cards.selector+'[data-id='+currentCard+']');
 
 			if ( num == currentCard ) {
-				console.log('current');
 				animate($cc, 0, easeAmt);
 				var $lc = $($cards.selector+'.last');
 				if ( $lc.length > 0 ) {
@@ -199,9 +198,10 @@ var Deck = function(selector, options) {
 				// How to move slides in
 				if ( num > currentCard ) {  // below current card
 					console.log('next');
+					$nc.addClass('next');
 					animate($cc, -viewportWidth, easeAmt);
 
-					$nc.addClass('current');
+					$nc.removeClass('next').addClass('current');
 					$cc.addClass('last');
 				} else {  // above current card
 					console.log('last');
