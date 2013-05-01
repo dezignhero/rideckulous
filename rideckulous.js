@@ -55,13 +55,13 @@ var Deck = function(selector, options) {
 
 		// Behavior
 		$controls.on('touchstart, click', function(){
-			if(!animating) {
+			if ( !animating ) {
 				animating = true;
 
 				var self = $(this);
-				if(self.hasClass('next') && (currentCard < numSlides-1)) {
+				if ( self.hasClass('next') && currentCard < numSlides-1 ) {
 					goTo = currentCard + 1;
-				} else if (self.hasClass('prev') && currentCard > 0) {
+				} else if ( self.hasClass('prev') && currentCard > 0 ) {
 					goTo = currentCard - 1;
 				}
 
@@ -76,7 +76,7 @@ var Deck = function(selector, options) {
 		$parent[0].addEventListener('touchend', function(e) { touchEnd(e); }, false);
 		// Desktop
 		$parent[0].addEventListener('mousedown', function(e) { touchStart(e); }, false);
-		$parent[0].addEventListener('mousemove', function(e) { if(e.which==1) { touchMove(e); } }, false);
+		$parent[0].addEventListener('mousemove', function(e) { if ( e.which==1) { touchMove(e); } }, false);
 		$parent[0].addEventListener('mouseup', function(e) { touchEnd(e); }, false);
 
 		// Orientation Change
@@ -94,7 +94,7 @@ var Deck = function(selector, options) {
 		viewportWidth = $parent.width();
 
 		// callback
-		if(typeof callback != 'undefined') {
+		if ( typeof callback != 'undefined') {
 			callback();
 		}
 	},
@@ -113,16 +113,16 @@ var Deck = function(selector, options) {
 		// Nullify event
 		e.preventDefault();
 
-		if(!animating) {
+		if ( !animating ) {
 			var moved = swipe.endX - swipe.startX;
 
 			// Figure out closest slide
-			if(moved > 0 && moved > viewportWidth/4) {
-				if(currentCard > 0) {
+			if ( moved > 0 && moved > viewportWidth/4 ) {
+				if ( currentCard > 0 ) {
 					goTo = currentCard - 1;
 				}
-			} else if(moved < 0 && moved < -viewportWidth/4) {
-				if(currentCard < numSlides-1) {
+			} else if ( moved < 0 && moved < -viewportWidth/4 ) {
+				if ( currentCard < numSlides-1 ) {
 					goTo = currentCard + 1;
 				}
 			} else {
@@ -174,7 +174,7 @@ var Deck = function(selector, options) {
 
 	jumpTo = function(num, ease) {
 		// Keep within range
-		if(num >= 0 && num < numSlides) {
+		if ( num >= 0 && num < numSlides ) {
 
 			// Animate
 			var easeAmt = ease || defaults.easeDefault;
@@ -224,9 +224,9 @@ var Deck = function(selector, options) {
 		// Enable control buttons
 		if ( currentCard > 0 && currentCard < numSlides-1 ) {
 			$('.control', el).show();
-		} else if (currentCard<=0) {
+		} else if ( currentCard <= 0 ) {
 			$('.control.prev').hide();
-			if( !defaults.preventAdvance || currentCard==0 ) {
+			if ( !defaults.preventAdvance || currentCard==0 ) {
 				$('.control.next').show();
 			}
 		} else if ( currentCard >= numSlides-1 ) {
