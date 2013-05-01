@@ -175,10 +175,26 @@ var Deck = function(selector, options) {
 		if ( ease != 'none' ) {
 			window.setTimeout(function(){
 				animating = false;
+
+				// Lock in place with class rather than style
+				lockPosition($card, scrollTo);
+
 				if ( typeof callback != 'undefined' ) {
 					callback();
 				}
 			}, ease*1000);
+		} else {
+			lockPosition($card, scrollTo);
+		}
+	},
+
+	lockPosition = function($card, scrollTo) {
+		// Lock in place with class rather than style
+		if ( scrollTo == 0 ) {
+			$card[0].style.removeProperty('-webkit-transform');
+		} else if ( scrollTo ==  -viewportWidth ) {
+			$card[0].style.removeProperty('-webkit-transform');
+			$card.addClass('last');
 		}
 	},
 
