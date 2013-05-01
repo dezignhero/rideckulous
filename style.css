@@ -30,5 +30,5 @@ h1 { font-size: 72px; margin-bottom: 0; }
 .page.current,
 .page.last { transform: scale(1,1); -ms-transform: scale(1,1); /* IE 9 */ -webkit-transform: scale(1,1); /* Safari and Chrome */ background: #eee; z-index: 100 !important; }
 .page.last { z-index: 101 !important; -webkit-transform: translate3d(-100%,0,0); }
-.page.next { z-index: 99 !important; }
+.page.next { z-index: 99 !important; -webkit-transform: translate3d(0,0,0); }
 	.page span { font-size: 400px; line-height: 400px; width: 200px; height: 400px; display: block; position: absolute; top: 50%; left: 50%; margin: -200px 0 0 -100px; text-shadow: 0px 2px 2px #fff; color: rgba(0,0,0,0.5); }

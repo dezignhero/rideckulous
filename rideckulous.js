@@ -41,7 +41,8 @@ var Deck = function(selector, options) {
 		numSlides = $cards.length;
 		$cards.each(function(i){
 			var self = $(this);
-			self.attr('data-id', i).css({ 'z-index' : numSlides-i });
+			self.attr('data-id', i);
+			// self.css({ 'z-index' : numSlides-i });
 			// Add initial class
 			if ( i == 0 ) self.addClass('current');
 			if ( i == 1 ) self.addClass('next');
@@ -160,10 +161,10 @@ var Deck = function(selector, options) {
 		}
 	},
 	
-	animate = function($card, scrollTo, ease) {
+	animate = function($card, scrollTo, ease, callback) {
 		// Check if card exists
-		if ( $card.length == 0 ) return;
-		
+		if ( $card.length == 0 ) return false;
+
 		// Momentum Effect or Not
 		var transition = ( ease != 'none' ) ? 'all '+ease+'s ease-out' : 'none';
 
@@ -171,11 +172,14 @@ var Deck = function(selector, options) {
 		$card[0].style.webkitTransform = 'translate3d('+scrollTo+'px,0,0)';
 
 		// Allow animating again
-		window.setTimeout(function(){
-			animating = false;
-		}, ease*1000);
-
-		return $card;
+		if ( ease != 'none' ) {
+			window.setTimeout(function(){
+				animating = false;
+				if ( typeof callback != 'undefined' ) {
+					callback();
+				}
+			}, ease*1000);
+		}
 	},
 
 	jumpTo = function(num, ease) {
@@ -188,35 +192,58 @@ var Deck = function(selector, options) {
 
 			// Determine how to move slides
 			var $cc = $($cards.selector+'[data-id='+currentCard+']');
+			var $lc = $($cards.selector+'.last');
 
 			if ( num == currentCard ) {
 				animate($cc, 0, easeAmt);
-				var $lc = $($cards.selector+'.last');
-				if ( $lc.length > 0 ) {
-					animate($lc, -viewportWidth, easeAmt);
-				}
+				animate($lc, -viewportWidth, easeAmt);
 			} else {
 				var $nc = $($cards.selector+'[data-id='+num+']');
 				
-				// Reset classes
-				$cards.removeClass('current last next');
+				if ( num > currentCard ) {
+					animate($cc, -viewportWidth, easeAmt, function(){
+						$cards.removeClass('last current next');
+						$cc.addClass('last');
+						$nc.addClass('current');
+						$($cards.selector+'[data-id='+(num+1)+']').addClass('next');
+					});
+				} else if ( num < currentCard ) {
+					$nc.addClass('last');
+					animate($nc, 0, easeAmt, function(){
+						$cards.removeClass('last current next');
+						$nc.addClass('current');
+						$($cards.selector+'[data-id='+(num-1)+']').addClass('last');
+						$($cards.selector+'[data-id='+(num+1)+']').addClass('next');
+					});
+				} 
 
-				// How to move slides in
-				if ( num > currentCard ) {  // below current card
-					console.log('next');
-					$nc.addClass('next');
-					animate($cc, -viewportWidth, easeAmt);
 
-					$nc.removeClass('next').addClass('current');
-					$cc.addClass('last');
-				} else {  // above current card
-					console.log('last');
-					animate($nc, -viewportWidth, 'none');
-					animate($nc, 0, easeAmt);
+
+
+
+				// // Reset classes
+				// $cards.removeClass('current last next');
+
+				// // How to move slides in
+				// if ( num > currentCard ) {  // below current card
+				// 	console.log('next');
+				// 	$nc.addClass('next');
+				// 	animate($cc, -viewportWidth, easeAmt);
+
+				// 	$nc.removeClass('next').addClass('current');
+				// 	$cc.addClass('last');
+				// } else {  // above current card
+				// 	console.log('last');
+				// 	animate($nc, -viewportWidth, 'none');
+				// 	animate($nc, 0, easeAmt);
 					
-					$nc.addClass('current');
-					$cc.addClass('next');
-				}
+				// 	$nc.addClass('current');
+				// 	$cc.addClass('next');
+				// }
+
+
+
+
 				// Update current slide
 				currentCard = num;
 			}
@@ -247,6 +274,8 @@ var Deck = function(selector, options) {
 	return {
 
 		element : $parent,
+
+		width : viewportWidth,
 
 		jumpTo : jumpTo,
 
