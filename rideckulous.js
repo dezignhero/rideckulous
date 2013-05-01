@@ -24,9 +24,9 @@ var Deck = function(selector, options) {
 	/*------- Initialization -------*/
 	
 	var el = selector,
-		parent = $(el),
-		cards = $('.page', el),
-		controls = $('.control');
+		$parent = $(el),
+		$cards = $('.page', el),
+		$controls = $('.control');
 	
 	/*------- Methods -------*/
 
@@ -35,15 +35,16 @@ var Deck = function(selector, options) {
 		defaults = $.extend(defaults, options || {});
 
 		// Setup
-		cards.css({ '-webkit-transition' : 'all '+defaults.easeDefault+'s ease-out' });
+		$cards.css({ '-webkit-transition' : 'all '+defaults.easeDefault+'s ease-out' });
 
 		// Assign ids
-		numSlides = cards.length;
-		cards.each(function(i){
+		numSlides = $cards.length;
+		$cards.each(function(i){
 			var self = $(this);
 			self.attr('data-id', i).css({ 'z-index' : numSlides-i });
 			// Add initial class
 			if ( i == 0 ) self.addClass('current');
+			if ( i == 1 ) self.addClass('next');
 		});
 
 		// Set Dimensions
@@ -53,7 +54,7 @@ var Deck = function(selector, options) {
 		updateControls();
 
 		// Behavior
-		controls.on('touchstart, click', function(){
+		$controls.on('touchstart, click', function(){
 			if(!animating) {
 				animating = true;
 
@@ -70,13 +71,13 @@ var Deck = function(selector, options) {
 		});
 
 		// Swiping
-		parent[0].addEventListener('touchstart', function(e) { touchStart(e); }, false);
-		parent[0].addEventListener('touchmove', function(e) { touchMove(e); }, false);
-		parent[0].addEventListener('touchend', function(e) { touchEnd(e); }, false);
+		$parent[0].addEventListener('touchstart', function(e) { touchStart(e); }, false);
+		$parent[0].addEventListener('touchmove', function(e) { touchMove(e); }, false);
+		$parent[0].addEventListener('touchend', function(e) { touchEnd(e); }, false);
 		// Desktop
-		parent[0].addEventListener('mousedown', function(e) { touchStart(e); }, false);
-		parent[0].addEventListener('mousemove', function(e) { if(e.which==1) { touchMove(e); } }, false);
-		parent[0].addEventListener('mouseup', function(e) { touchEnd(e); }, false);
+		$parent[0].addEventListener('mousedown', function(e) { touchStart(e); }, false);
+		$parent[0].addEventListener('mousemove', function(e) { if(e.which==1) { touchMove(e); } }, false);
+		$parent[0].addEventListener('mouseup', function(e) { touchEnd(e); }, false);
 
 		// Orientation Change
 		var supportsOrientationChange = "onorientationchange" in window,
@@ -90,7 +91,7 @@ var Deck = function(selector, options) {
 	},
 
 	resize = function(callback){
-		viewportWidth = parent.width();
+		viewportWidth = $parent.width();
 
 		// callback
 		if(typeof callback != 'undefined') {
@@ -149,27 +150,27 @@ var Deck = function(selector, options) {
 			e.preventDefault();
 
 			// Always run this so that hit the ends
-			var card = ( dX <= 0 ) ? $('.page.current') : $('.page.top');
-			if ( card.length > 0 ) {
-				dX = ( card.hasClass('top') ) ? dX-viewportWidth : dX;
-				animate(card, dX, 'none');
+			var $card = ( dX <= 0 ) ? $('.page.current') : $('.page.top');
+			if ( $card.length > 0 ) {
+				dX = ( $card.hasClass('top') ) ? dX-viewportWidth : dX;
+				animate($card, dX, 'none');
 			}
 		}
 	},
 	
-	animate = function(card, scrollTo, ease) {
+	animate = function($card, scrollTo, ease) {
 		// Momentum Effect or Not
 		var transition = ( ease != 'none' ) ? 'all '+ease+'s ease-out' : 'none';
 
-		card[0].style.webkitTransition = transition;
-		card[0].style.webkitTransform = 'translate3d('+scrollTo+'px,0,0)';
+		$card[0].style.webkitTransition = transition;
+		$card[0].style.webkitTransform = 'translate3d('+scrollTo+'px,0,0)';
 
 		// Allow animating again
 		window.setTimeout(function(){
 			animating = false;
 		}, ease*1000);
 
-		return card;
+		return $card;
 	},
 
 	jumpToSlide = function(num, ease) {
@@ -181,29 +182,29 @@ var Deck = function(selector, options) {
 			animating = true;
 
 			// Determine how to move slides
-			var cc = $(cards.selector+'[data-id='+currentCard+']');
+			var cc = $($cards.selector+'[data-id='+currentCard+']');
 
 			if(num == currentCard) {
 				animate(cc, 0, easeAmt);
-				var tc = $(cards.selector+'.top');
+				var tc = $($cards.selector+'.top');
 				if(tc.length>0) {
 					animate(tc, -viewportWidth, easeAmt);
 				}
 			} else {
-				var nc = $(cards.selector+'[data-id='+num+']');
+				var nc = $($cards.selector+'[data-id='+num+']');
 
 				// How to move slides in
 				if(num > currentCard) {  // below current card
 					animate(cc, -viewportWidth, easeAmt);
 					
-					cards.removeClass('current').removeClass('top');
+					$cards.removeClass('current').removeClass('top');
 					nc.addClass('current');
 					cc.addClass('top');
 				} else {  // above current card
 					animate(nc, -viewportWidth, 'none');
 					animate(nc, 0, easeAmt);
 					
-					cards.removeClass('current');
+					$cards.removeClass('current');
 					nc.removeClass('top').addClass('current');
 				}
 				// Update current slide
@@ -235,7 +236,7 @@ var Deck = function(selector, options) {
 
 	return {
 
-		element : parent,
+		element : $parent,
 
 		jumpToSlide : jumpToSlide,
 

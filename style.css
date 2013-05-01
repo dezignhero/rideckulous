@@ -26,5 +26,6 @@ h1 { font-size: 72px; margin-bottom: 0; }
 
 .page { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #999; text-align: center; transform: scale(0.96,0.96); -ms-transform: scale(0.96,0.96); /* IE 9 */ -webkit-transform: scale(0.96,0.96); /* Safari and Chrome */ }
 .page.current,
-.page.top { transform: scale(1,1); -ms-transform: scale(1,1); /* IE 9 */ -webkit-transform: scale(1,1); /* Safari and Chrome */ background: #fff; }
+.page.last { transform: scale(1,1); -ms-transform: scale(1,1); /* IE 9 */ -webkit-transform: scale(1,1); /* Safari and Chrome */ background: #fff; z-index: 10; }
+.page.next { z-index: 9; }
 
