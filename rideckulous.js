@@ -130,7 +130,6 @@ var Deck = function(selector, options) {
 			}
 
 			// Jump to closest
-			console.log('goTo: '+goTo);
 			jumpToSlide(goTo, 0.15);
 		}
 	},
@@ -150,9 +149,9 @@ var Deck = function(selector, options) {
 			e.preventDefault();
 
 			// Always run this so that hit the ends
-			var $card = ( dX <= 0 ) ? $('.page.current') : $('.page.top');
+			var $card = ( dX <= 0 ) ? $('.page.current') : $('.page.last');
 			if ( $card.length > 0 ) {
-				dX = ( $card.hasClass('top') ) ? dX-viewportWidth : dX;
+				dX = ( $card.hasClass('last') ) ? dX-viewportWidth : dX;
 				animate($card, dX, 'none');
 			}
 		}
@@ -184,28 +183,28 @@ var Deck = function(selector, options) {
 			// Determine how to move slides
 			var cc = $($cards.selector+'[data-id='+currentCard+']');
 
-			if(num == currentCard) {
+			if ( num == currentCard ) {
 				animate(cc, 0, easeAmt);
-				var tc = $($cards.selector+'.top');
-				if(tc.length>0) {
+				var tc = $($cards.selector+'.last');
+				if ( tc.length > 0 ) {
 					animate(tc, -viewportWidth, easeAmt);
 				}
 			} else {
 				var nc = $($cards.selector+'[data-id='+num+']');
 
 				// How to move slides in
-				if(num > currentCard) {  // below current card
+				if ( num > currentCard ) {  // below current card
 					animate(cc, -viewportWidth, easeAmt);
 					
-					$cards.removeClass('current').removeClass('top');
+					$cards.removeClass('current').removeClass('last');
 					nc.addClass('current');
-					cc.addClass('top');
+					cc.addClass('last');
 				} else {  // above current card
 					animate(nc, -viewportWidth, 'none');
 					animate(nc, 0, easeAmt);
 					
 					$cards.removeClass('current');
-					nc.removeClass('top').addClass('current');
+					nc.removeClass('last').addClass('current');
 				}
 				// Update current slide
 				currentCard = num;
@@ -218,14 +217,14 @@ var Deck = function(selector, options) {
 
 	updateControls = function() {
 		// Enable control buttons
-		if(currentCard>0 && currentCard<numSlides-1) {
+		if ( currentCard > 0 && currentCard < numSlides-1 ) {
 			$('.control', el).show();
 		} else if (currentCard<=0) {
 			$('.control.prev').hide();
-			if(!defaults.preventAdvance || currentCard==0) {
+			if( !defaults.preventAdvance || currentCard==0 ) {
 				$('.control.next').show();
 			}
-		} else if (currentCard>=numSlides-1) {
+		} else if ( currentCard >= numSlides-1 ) {
 			$('.control.next').hide();
 			$('.control.prev').show();
 		}
