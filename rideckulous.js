@@ -13,7 +13,7 @@ var Deck = function(selector, options) {
 		minScale = 0.96;
 
 	// Cards
-	var $cc, $lc, $nc;
+	var $cc = $lc = $nc = [];
 
 	// Swiping
 	var swipe = {
@@ -47,8 +47,15 @@ var Deck = function(selector, options) {
 			self.attr('data-id', i).css({'-webkit-transition' : 'all '+defaults.easeDefault+'s ease-out'});
 			
 			// Add initial class
-			if ( i == 0 ) self.addClass('current');
-			if ( i == 1 ) self.addClass('next');
+			if ( i == 0 ) {
+				self.addClass('current');
+				$cc = self;
+			}
+			
+			if ( i == 1 ) {
+				self.addClass('next');
+				$nc = self;
+			}
 		});
 
 		// Set Dimensions
@@ -165,8 +172,12 @@ var Deck = function(selector, options) {
 			// Figure out closest slide
 			if ( moved > threshold && currentCard > 0 ) {
 				goTo = currentCard - 1;
+				// Restore scale
+				scale($cc, minScale);
 			} else if ( moved < -threshold && currentCard < numSlides-1 ) {
 				goTo = currentCard + 1;
+				// Restore scale
+				scale($nc, 1);
 			} else {
 				goTo = currentCard;
 			}
@@ -248,7 +259,7 @@ var Deck = function(selector, options) {
 						$after.addClass('next');
 					});
 				} else if ( num < currentCard ) {
-					$lc.removeClass('last');
+					if ( $lc.length > 0 ) $lc.removeClass('last');
 					$go.addClass('last');
 					// Need to set delay so moving $go to last position is done and ready
 					window.setTimeout(function(){
