@@ -124,16 +124,19 @@ var Deck = function(selector, options) {
 
 			// Always run this so that hit the ends
 			var $cc = $('.page.current'),
-				$lc = $('.page.last');
+				$lc = $('.page.last'),
+				$nc = $('.page.next');
 			
-			progression = dX * sensitivity / viewportWidth;
-
+			progression = dX / viewportWidth;
+			
 			// Choose which way to animate
 			if ( dX <= 0 ) {
 				animate($cc, dX, 'none');
-				animate($lc, -viewportWidth, 'none');  // lock other card in place
+				// lock other card in place
+				animate($lc, -viewportWidth, 'none');
 			} else {
 				animate($lc, dX-viewportWidth, 'none');
+				// lock other card in place
 				animate($cc, 0, 'none');
 			}
 		}
