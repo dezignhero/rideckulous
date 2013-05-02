@@ -207,58 +207,38 @@ var Deck = function(selector, options) {
 			animating = true;
 
 			// Determine how to move slides
-			var $cc = $($cards.selector+'[data-id='+currentCard+']');
-			var $lc = $($cards.selector+'.last');
+			var $cc = $($cards.selector+'[data-id='+currentCard+']'),
+				$lc = $($cards.selector+'.last'),
+				$nc = $($cards.selector+'.next');
 
 			if ( num == currentCard ) {
 				animate($cc, 0, easeAmt);
 				animate($lc, -viewportWidth, easeAmt);
 			} else {
-				var $nc = $($cards.selector+'[data-id='+num+']');
+				var $go = $($cards.selector+'[data-id='+num+']'),
+					$before = $($cards.selector+'[data-id='+(num-1)+']'),
+					$after = $($cards.selector+'[data-id='+(num+1)+']');
 				
 				if ( num > currentCard ) {
+					$nc.removeClass('next');
+					$go.addClass('next');
 					animate($cc, -viewportWidth, easeAmt, function(){
 						$cards.removeClass('last current next');
-						$cc.addClass('last');
-						$nc.addClass('current');
-						$($cards.selector+'[data-id='+(num+1)+']').addClass('next');
+						$go.addClass('current');
+						$before.addClass('last');
+						$after.addClass('next');
 					});
 				} else if ( num < currentCard ) {
-					$nc.addClass('last');
-					animate($nc, 0, easeAmt, function(){
+					console.log('last');
+					$lc.removeClass('last');
+					$go.addClass('last');
+					animate($go, 0, easeAmt, function(){
 						$cards.removeClass('last current next');
-						$nc.addClass('current');
-						$($cards.selector+'[data-id='+(num-1)+']').addClass('last');
-						$($cards.selector+'[data-id='+(num+1)+']').addClass('next');
+						$go.addClass('current');
+						$before.addClass('last');
+						$after.addClass('next');
 					});
-				} 
-
-
-
-
-
-				// // Reset classes
-				// $cards.removeClass('current last next');
-
-				// // How to move slides in
-				// if ( num > currentCard ) {  // below current card
-				// 	console.log('next');
-				// 	$nc.addClass('next');
-				// 	animate($cc, -viewportWidth, easeAmt);
-
-				// 	$nc.removeClass('next').addClass('current');
-				// 	$cc.addClass('last');
-				// } else {  // above current card
-				// 	console.log('last');
-				// 	animate($nc, -viewportWidth, 'none');
-				// 	animate($nc, 0, easeAmt);
-					
-				// 	$nc.addClass('current');
-				// 	$cc.addClass('next');
-				// }
-
-
-
+				}
 
 				// Update current slide
 				currentCard = num;
