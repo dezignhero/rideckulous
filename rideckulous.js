@@ -12,6 +12,9 @@ var Deck = function(selector, options) {
 		progression = 0,
 		minScale = 0.96;
 
+	// Cards
+	var $cc, $lc, $nc;
+
 	// Swiping
 	var swipe = {
 		started : false,
@@ -106,6 +109,11 @@ var Deck = function(selector, options) {
 		swipe.startX = e.touches ? e.touches[0].pageX : e.pageX;
 		swipe.startY = e.touches ? e.touches[0].pageY : e.pageY;
 		swipe.endX = swipe.startX;  // prevent click swiping when touchMove doesn't fire
+
+		// Initiate card references
+		$cc = $($cards.selector+'.current');
+		$lc = $($cards.selector+'.last');
+		$nc = $($cards.selector+'.next');
 	},
 	
 	touchMove = function(e) {
@@ -122,11 +130,6 @@ var Deck = function(selector, options) {
 
 			// Prevent default event
 			e.preventDefault();
-
-			// Always run this so that hit the ends
-			var $cc = $($cards.selector+'.current'),
-				$lc = $($cards.selector+'.last'),
-				$nc = $($cards.selector+'.next');
 			
 			progression = Math.floor(100 * dX / viewportWidth)/1000;
 			
@@ -227,10 +230,6 @@ var Deck = function(selector, options) {
 			animating = true;
 
 			// Determine how to move slides
-			var $cc = $($cards.selector+'[data-id='+currentCard+']'),
-				$lc = $($cards.selector+'.last'),
-				$nc = $($cards.selector+'.next');
-
 			if ( num == currentCard ) {
 				animate($cc, 0, easeAmt);
 				animate($lc, -viewportWidth, easeAmt);
