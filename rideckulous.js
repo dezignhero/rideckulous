@@ -231,15 +231,17 @@ var Deck = function(selector, options) {
 						$after.addClass('next');
 					});
 				} else if ( num < currentCard ) {
-					console.log('last');
 					$lc.removeClass('last');
 					$go.addClass('last');
-					animate($go, 0, easeAmt, function(){
-						$cards.removeClass('last current next');
-						$go.addClass('current');
-						$before.addClass('last');
-						$after.addClass('next');
-					});
+					// Need to set delay so moving $go to last position is done and ready
+					window.setTimeout(function(){
+						animate($go, 0, easeAmt, function(){
+							$cards.removeClass('last current next');
+							$go.addClass('current');
+							$before.addClass('last');
+							$after.addClass('next');
+						});
+					}, easeAmt*1000);
 				}
 
 				// Update current slide
