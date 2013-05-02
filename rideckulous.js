@@ -147,14 +147,14 @@ var Deck = function(selector, options) {
 				// animate actual card
 				animate($cc, dX, 'none');
 				// scale
-				scale($nc, Math.min(0.98, minScale-progression), 'none');
+				scale($nc, Math.min(1, minScale-progression), 'none');
 			} else {
 				// lock other card in place
 				animate($cc, 0, 'none');
 				// animate actual card
 				animate($lc, dX-viewportWidth, 'none');
 				// scale
-				scale($cc, Math.max(0.98, 1-progression), 'none');
+				scale($cc, Math.max(minScale, 1-progression), 'none');
 			}
 		}
 	},
