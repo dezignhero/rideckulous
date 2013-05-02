@@ -3,11 +3,13 @@ var Deck = function(selector, options) {
 	/*------- Globals -------*/
 
 	var viewportWidth = 0,
+		sensitivity = 4,
 		animating = false,
 		numSlides = 0,
 		goTo = 0,
 		currentCard = 0,
-		lastSlide = 0;
+		lastSlide = 0,
+		progression = 0;
 
 	// Swiping
 	var swipe = {
@@ -124,6 +126,9 @@ var Deck = function(selector, options) {
 			var $cc = $('.page.current'),
 				$lc = $('.page.last');
 			
+			progression = dX * sensitivity / viewportWidth;
+
+			// Choose which way to animate
 			if ( dX <= 0 ) {
 				animate($cc, dX, 'none');
 				animate($lc, -viewportWidth, 'none');  // lock other card in place
@@ -142,7 +147,7 @@ var Deck = function(selector, options) {
 
 		if ( !animating ) {
 			var moved = swipe.endX - swipe.startX,
-				threshold = viewportWidth/4;
+				threshold = viewportWidth/sensitivity;
 
 			// Figure out closest slide
 			if ( moved > threshold && currentCard > 0 ) {
