@@ -28,7 +28,7 @@ h1 { font-size: 72px; margin-bottom: 0; }
 	.page span { font-size: 400px; line-height: 400px; width: 200px; height: 400px; display: block; position: absolute; top: 50%; left: 50%; margin: -200px 0 0 -100px; text-shadow: 0px 2px 2px #fff; color: rgba(0,0,0,0.5); }
 .overlay,
 .backing { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #ccc; }
-.overlay { background: rgba(0,0,0,0.25); }
+.overlay { background: rgba(0,0,0,0.2); }
 .page.current { transform: scale(1,1); -webkit-transform: scale(1,1); }
 .page.last { -webkit-transform: translate3d(-100%,0,0); }
 .page.next { -webkit-transform: translate3d(0,0,0); transform: scale(0.96); -webkit-transform: scale(0.96); }
