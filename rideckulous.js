@@ -34,15 +34,12 @@ var Deck = function(selector, options) {
 		// Options
 		defaults = $.extend(defaults, options || {});
 
-		// Setup
-		$cards.css({ '-webkit-transition' : 'all '+defaults.easeDefault+'s ease-out' });
-
 		// Assign ids
 		numSlides = $cards.length;
 		$cards.each(function(i){
 			var self = $(this);
 			self.attr('data-id', i);
-			// self.css({ 'z-index' : numSlides-i });
+
 			// Add initial class
 			if ( i == 0 ) self.addClass('current');
 			if ( i == 1 ) self.addClass('next');
@@ -270,8 +267,6 @@ var Deck = function(selector, options) {
 	return {
 
 		element : $parent,
-
-		width : viewportWidth,
 
 		jumpTo : jumpTo,
 
