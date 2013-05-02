@@ -124,9 +124,9 @@ var Deck = function(selector, options) {
 			e.preventDefault();
 
 			// Always run this so that hit the ends
-			var $cc = $('.page.current'),
-				$lc = $('.page.last'),
-				$nc = $('.page.next');
+			var $cc = $($cards.selector+'.current'),
+				$lc = $($cards.selector+'.last'),
+				$nc = $($cards.selector+'.next');
 			
 			progression = Math.floor(100 * dX / viewportWidth)/1000;
 			
