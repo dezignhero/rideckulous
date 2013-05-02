@@ -40,8 +40,8 @@ var Deck = function(selector, options) {
 		numSlides = $cards.length;
 		$cards.each(function(i){
 			var self = $(this);
-			self.attr('data-id', i);
-
+			self.attr('data-id', i).css({'-webkit-transition' : 'all '+defaults.easeDefault+'s ease-out'});
+			
 			// Add initial class
 			if ( i == 0 ) self.addClass('current');
 			if ( i == 1 ) self.addClass('next');
