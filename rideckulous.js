@@ -9,7 +9,8 @@ var Deck = function(selector, options) {
 		goTo = 0,
 		currentCard = 0,
 		lastSlide = 0,
-		progression = 0;
+		progression = 0,
+		minScale = 0.96;
 
 	// Swiping
 	var swipe = {
@@ -127,17 +128,23 @@ var Deck = function(selector, options) {
 				$lc = $('.page.last'),
 				$nc = $('.page.next');
 			
-			progression = dX / viewportWidth;
+			progression = Math.floor(100 * dX / viewportWidth)/1000;
 			
 			// Choose which way to animate
 			if ( dX <= 0 ) {
-				animate($cc, dX, 'none');
 				// lock other card in place
 				animate($lc, -viewportWidth, 'none');
+				// animate actual card
+				animate($cc, dX, 'none');
+				// scale
+				scale($nc, Math.min(1, minScale-progression));
 			} else {
-				animate($lc, dX-viewportWidth, 'none');
 				// lock other card in place
 				animate($cc, 0, 'none');
+				// animate actual card
+				animate($lc, dX-viewportWidth, 'none');
+				// scale
+				scale($cc, Math.max(minScale, 1-progression));
 			}
 		}
 	},
@@ -191,6 +198,14 @@ var Deck = function(selector, options) {
 		} else {
 			lockPosition($card, scrollTo);
 		}
+	},
+
+	scale = function($card, scale) {
+		// Check if card exists
+		if ( $card.length == 0 ) return false;
+
+		$card[0].style.webkitTransition = 'none';
+		$card[0].style.webkitTransform = 'scale('+scale+')';
 	},
 
 	lockPosition = function($card, scrollTo) {
