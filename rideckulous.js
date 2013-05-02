@@ -138,7 +138,7 @@ var Deck = function(selector, options) {
 			// Prevent default event
 			e.preventDefault();
 			
-			progression = Math.floor(100 * dX / viewportWidth)/1000;
+			progression = Math.floor(100 * dX / viewportWidth)/2000;
 			
 			// Choose which way to animate
 			if ( dX <= 0 ) {
@@ -147,14 +147,14 @@ var Deck = function(selector, options) {
 				// animate actual card
 				animate($cc, dX, 'none');
 				// scale
-				scale($nc, Math.min(1, minScale-progression));
+				scale($nc, Math.min(0.98, minScale-progression), 'none');
 			} else {
 				// lock other card in place
 				animate($cc, 0, 'none');
 				// animate actual card
 				animate($lc, dX-viewportWidth, 'none');
 				// scale
-				scale($cc, Math.max(minScale, 1-progression));
+				scale($cc, Math.max(0.98, 1-progression), 'none');
 			}
 		}
 	},
@@ -173,11 +173,11 @@ var Deck = function(selector, options) {
 			if ( moved > threshold && currentCard > 0 ) {
 				goTo = currentCard - 1;
 				// Restore scale
-				scale($cc, minScale);
+				scale($cc, minScale, 0.2);
 			} else if ( moved < -threshold && currentCard < numSlides-1 ) {
 				goTo = currentCard + 1;
 				// Restore scale
-				scale($nc, 1);
+				scale($nc, 1, 0.2);
 			} else {
 				goTo = currentCard;
 			}
@@ -214,11 +214,14 @@ var Deck = function(selector, options) {
 		}
 	},
 
-	scale = function($card, scale) {
+	scale = function($card, scale, ease) {
 		// Check if card exists
 		if ( $card.length == 0 ) return false;
 
-		$card[0].style.webkitTransition = 'none';
+		// Momentum Effect or Not
+		var transition = ( ease != 'none' ) ? 'all '+ease+'s ease-out' : 'none';
+
+		$card[0].style.webkitTransition = transition;
 		$card[0].style.webkitTransform = 'scale('+scale+')';
 	},
 
