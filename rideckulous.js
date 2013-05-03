@@ -3,14 +3,12 @@ var Deck = function(selector, options) {
 	/*------- Globals -------*/
 
 	var viewportWidth = 0,
-		sensitivity = 4,
 		animating = false,
 		numSlides = 0,
 		goTo = 0,
 		currentCard = 0,
 		lastSlide = 0,
-		progression = 0,
-		minScale = 0.96;
+		progression = 0;
 
 	// Cards
 	var $cc = $lc = $nc = [];
@@ -24,15 +22,18 @@ var Deck = function(selector, options) {
 
 	// Defaults
 	var defaults = {
-		easeDefault : 0.2
+		ease : 0.2,
+		shrink : 0.96,
+		sensitivity : 4,
+		cards : '.page',
+		controls : '.control'
 	};
 
 	/*------- Initialization -------*/
 	
 	var el = selector,
 		$parent = $(el),
-		$cards = $('.page', el),
-		$controls = $('.control');
+		$cards, $controls;
 	
 	/*------- Methods -------*/
 
@@ -40,21 +41,27 @@ var Deck = function(selector, options) {
 		// Options
 		defaults = $.extend(defaults, options || {});
 
-		// Assign ids
+		// Initialize values
+		defaults.transition = 'all '+defaults.ease+'s ease-out';
+		$cards = $(defaults.cards, el);
+		$controls = $(defaults.controls);
+
+		// Assign Ids to the cards
 		numSlides = $cards.length;
 		$cards.each(function(i){
 			var self = $(this);
-			self.attr('data-id', i).css({'-webkit-transition' : 'all '+defaults.easeDefault+'s ease-out'});
+
+			self.attr('data-id', i);
+			// .css({'-webkit-transition' : 'all '+defaults.ease+'s ease-out'});
 			
 			// Add initial class
 			if ( i == 0 ) {
-				self.addClass('current');
 				$cc = self;
+				$cc.slot('current');
 			}
-			
 			if ( i == 1 ) {
-				self.addClass('next');
 				$nc = self;
+				$nc.slot('next');
 			}
 		});
 
@@ -66,19 +73,20 @@ var Deck = function(selector, options) {
 
 		// Behavior
 		$controls.on('touchstart, click', function(){
-			if ( !animating ) {
-				animating = true;
+			var self = $(this),
+				action = self.attr('data-action');
 
-				var self = $(this);
-				if ( self.hasClass('next') && currentCard < numSlides-1 ) {
-					goTo = currentCard + 1;
-				} else if ( self.hasClass('prev') && currentCard > 0 ) {
-					goTo = currentCard - 1;
-				}
+			// Ensure action defined
+			if ( typeof action != 'undefined' ) return;
 
-				// Move container
-				jumpTo(goTo);
+			if ( action == 'next' && currentCard < numSlides - 1 ) {
+				goTo = currentCard + 1;
+			} else if ( action == 'prev' && currentCard > 0 ) {
+				goTo = currentCard - 1;
 			}
+
+			// Move container
+			jumpTo(goTo);
 		});
 
 		// Swiping
@@ -138,141 +146,101 @@ var Deck = function(selector, options) {
 			// Prevent default event
 			e.preventDefault();
 			
-			progression = Math.floor(100 * dX / viewportWidth)/2000;
-			
-			// Choose which way to animate
-			if ( dX <= 0 ) {
-				// lock other card in place
-				animate($lc, -viewportWidth, 'none');
-				// animate actual card
-				animate($cc, dX, 'none');
-				// scale
-				scale($nc, Math.min(1, minScale-progression), 'none');
-			} else {
-				// lock other card in place
-				animate($cc, 0, 'none');
-				// animate actual card
-				animate($lc, dX-viewportWidth, 'none');
-				// scale
-				scale($cc, Math.max(minScale, 1-progression), 'none');
-			}
+			moveTo(dX);
 		}
 	},
 
 	touchEnd = function(e) {
 		swipe.started = false;
 
+		if ( animating ) return;
+
 		// Nullify event
 		e.preventDefault();
 
-		if ( !animating ) {
-			var moved = swipe.endX - swipe.startX,
-				threshold = viewportWidth/sensitivity;
+		var moved = swipe.endX - swipe.startX,
+			threshold = viewportWidth/defaults.sensitivity;
 
-			// Figure out closest slide
-			if ( moved > threshold && currentCard > 0 ) {
-				goTo = currentCard - 1;
-				// Restore scale
-				scale($cc, minScale, 0.2);
-			} else if ( moved < -threshold && currentCard < numSlides-1 ) {
-				goTo = currentCard + 1;
-				// Restore scale
-				scale($nc, 1, 0.2);
-			} else {
-				goTo = currentCard;
-			}
-
-			// Jump to closest
-			jumpTo(goTo, 0.15);
+		// Figure out closest slide
+		if ( moved > threshold && currentCard > 0 ) {
+			goTo = currentCard - 1;
+		} else if ( moved < -threshold && currentCard < numSlides-1 ) {
+			goTo = currentCard + 1;
+		} else {
+			goTo = currentCard;
 		}
+
+		// Jump to closest
+		jumpTo(goTo);
 	},
 	
+	moveTo = function(dX) {
+		progression = Math.floor(100 * dX / viewportWidth)/2000;
+		
+		// Choose which way to animate
+		if ( dX <= 0 ) {
+			// lock other card in place
+			animate($lc, -viewportWidth, false);
+			// animate actual card
+			animate($cc, dX, false);
+		} else {
+			// lock other card in place
+			animate($cc, 0, false);
+			// animate actual card
+			animate($lc, dX-viewportWidth, false);
+		}
+	},
+
 	animate = function($card, scrollTo, ease, callback) {
 		// Check if card exists
 		if ( $card.length == 0 ) return false;
 
 		// Momentum Effect or Not
-		var transition = ( ease != 'none' ) ? 'all '+ease+'s ease-out' : 'none';
-
-		$card[0].style.webkitTransition = transition;
+		$card[0].style.webkitTransition = ( ease ) ? defaults.transition : '';
 		$card[0].style.webkitTransform = 'translate3d('+scrollTo+'px,0,0)';
 
 		// Allow animating again
 		if ( ease != 'none' ) {
+			animating = true;
 			window.setTimeout(function(){
 				animating = false;
-
-				// Lock in place with class rather than style
-				lockPosition($card, scrollTo);
 
 				if ( typeof callback != 'undefined' ) {
 					callback();
 				}
 			}, ease*1000);
-		} else {
-			lockPosition($card, scrollTo);
 		}
 	},
 
-	scale = function($card, scale, ease) {
-		// Check if card exists
-		if ( $card.length == 0 ) return false;
-
-		// Momentum Effect or Not
-		var transition = ( ease != 'none' ) ? 'all '+ease+'s ease-out' : 'none';
-
-		$card[0].style.webkitTransition = transition;
-		$card[0].style.webkitTransform = 'scale('+scale+')';
-	},
-
-	lockPosition = function($card, scrollTo) {
-		// Lock in place with class rather than style
-		if ( scrollTo == 0 ) {
-			$card[0].style.removeProperty('-webkit-transform');
-		} else if ( scrollTo ==  -viewportWidth ) {
-			$card[0].style.removeProperty('-webkit-transform');
-			$card.addClass('last');
-		}
-	},
-
-	jumpTo = function(num, ease) {
+	jumpTo = function(num) {
 		// Keep within range
 		if ( num >= 0 && num < numSlides ) {
 
-			// Animate
-			var easeAmt = ease || defaults.easeDefault;
-			animating = true;
+			// How far away is the new card?
+			var diff = Math.abs( num - currentCard );
 
 			// Determine how to move slides
-			if ( num == currentCard ) {
-				animate($cc, 0, easeAmt);
-				animate($lc, -viewportWidth, easeAmt);
+			if ( diff == 0 ) {
+				animate($cc, 0, true);
+				animate($lc, -viewportWidth, true);
 			} else {
-				var $go = $($cards.selector+'[data-id='+num+']'),
-					$before = $($cards.selector+'[data-id='+(num-1)+']'),
-					$after = $($cards.selector+'[data-id='+(num+1)+']');
-				
-				if ( num > currentCard ) {
-					$nc.removeClass('next');
-					$go.addClass('next');
-					animate($cc, -viewportWidth, easeAmt, function(){
-						$cards.removeClass('last current next');
-						$go.addClass('current');
-						$before.addClass('last');
-						$after.addClass('next');
-					});
-				} else if ( num < currentCard ) {
-					if ( $lc.length > 0 ) $lc.removeClass('last');
-					$go.addClass('last');
-					// Need to set delay so moving $go to last position is done and ready
-					window.setTimeout(function(){
-						animate($go, 0, easeAmt, function(){
-							$cards.removeClass('last current next');
-							$go.addClass('current');
-							$before.addClass('last');
-							$after.addClass('next');
-						});
-					}, easeAmt*1000);
+				var $go = $(defaults.cards+'[data-id='+num+']'),
+					$before = $(defaults.cards+'[data-id='+(num-1)+']'),
+					$after = $(defaults.cards+'[data-id='+(num+1)+']');
+
+				// Do we need to re-slot?
+				if ( diff >= 2 ) {
+
+				} else {
+					$go.slot('current', true);
+					// Going to card is below current card
+					if ( num > currentCard ) {
+						$after.slot('next', false);
+						$before.slot('last', true);
+					} else {
+						$before.slot('last', false);
+						$after.slot('next', true);
+					}
 				}
 
 				// Update current slide
@@ -285,18 +253,58 @@ var Deck = function(selector, options) {
 	},
 
 	updateControls = function() {
-		// Enable control buttons
-		if ( currentCard > 0 && currentCard < numSlides-1 ) {
-			$('.control', el).show();
-		} else if ( currentCard <= 0 ) {
-			$('.control.prev').hide();
-			if ( !defaults.preventAdvance || currentCard==0 ) {
-				$('.control.next').show();
-			}
-		} else if ( currentCard >= numSlides-1 ) {
-			$('.control.next').hide();
-			$('.control.prev').show();
+		var $prevCtrl = $(defaults.controls+'[data-action=prev]'),
+			$nextCtrl = $(defaults.controls+'[data-action=next]');
+
+		if ( currentCard >= 0 && currentCard < numSlides ) {
+			$controls.show();
+			if ( currentCard == 0 ) {
+				$prevCtrl.hide();
+			} else if ( currentCard == numSlides-1 ) {
+				$nextCtrl.hide();
+			}	
+		} else {
+			$controls.hide();
 		}
+	};
+
+	$.fn.slot = function(pos, ease) {
+		var self = $(this),
+			transform = '';
+
+		// Requires valid jQuery object
+		if ( self.length == 0 ) return;
+
+		// Slot in correct position and scale
+		if ( pos == 'current' ) {
+			transform = 'translate3d(0,0,0) scale(1)';
+		} else if ( pos == 'last' ) {
+			transform = 'translate3d('+-viewportWidth+'px,0,0) scale(1)';
+		} else if ( pos == 'next' ) {
+			transform = 'translate3d(0,0,0) scale('+defaults.shrink+')';
+		}
+
+		// Prevent duplicates
+		$(defaults.cards+'.'+pos).removeClass(pos);
+
+		self.removeClass('current last next')
+			.addClass(pos).css({ 
+				'-webkit-transform' : transform,
+				'-webkit-transition' : ( ease ) ? defaults.transition : ''
+			});
+	};
+
+	$.fn.unslot = function(pos, ease) {
+		var self = $(this),
+			transform = '';
+
+		// Requires valid jQuery object
+		if ( self.length == 0 ) return;
+
+		self.removeClass(pos).css({ 
+			'-webkit-transform' : 'translate3d(0,0,0) scale('+defaults.shrink+')',
+			'-webkit-transition' : ( ease ) ? defaults.transition : ''
+		});
 	};
 
 	// Initialize the object
