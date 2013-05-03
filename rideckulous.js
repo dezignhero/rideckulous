@@ -24,7 +24,7 @@ var Deck = function(selector, options) {
 	var defaults = {
 		ease : 0.2,
 		shrink : 0.96,
-		sensitivity : 4,
+		sensitivity : 5,
 		cards : '.page',
 		controls : '.control'
 	};
@@ -161,13 +161,13 @@ var Deck = function(selector, options) {
 		var moved = swipe.endX - swipe.startX,
 			threshold = viewportWidth/defaults.sensitivity;
 
+		goTo = currentCard;
+
 		// Figure out closest slide
 		if ( moved > threshold && currentCard > 0 ) {
-			goTo = currentCard - 1;
+			goTo--;
 		} else if ( moved < -threshold && currentCard < numSlides-1 ) {
-			goTo = currentCard + 1;
-		} else {
-			goTo = currentCard;
+			goTo++;
 		}
 
 		// Jump to closest
@@ -228,10 +228,20 @@ var Deck = function(selector, options) {
 					$before = $(defaults.cards+'[data-id='+(num-1)+']'),
 					$after = $(defaults.cards+'[data-id='+(num+1)+']');
 
-				// Do we need to re-slot?
-				if ( diff >= 2 ) {
-
-				} else {
+				// Are we REALLY jumping?
+				if ( diff >= 2 ) {  // Yes
+					// Determine where to start from
+					var startPos = ( num > currentCard ) ? 'next' : 'last';
+					// Shuffle cards into correct positions
+					$go.slot(startPos, false, function(){
+						$go.slot('current', true, function(){
+							$before.slot('last', false);
+							$after.slot('next', false);
+							// Update current slide
+							currentCard = num;
+						});	
+					});
+				} else {  // Locking in place
 					$go.slot('current', true);
 					// Going to card is below current card
 					if ( num > currentCard ) {
@@ -241,10 +251,9 @@ var Deck = function(selector, options) {
 						$before.slot('last', false);
 						$after.slot('next', true);
 					}
+					// Update current slide
+					currentCard = num;
 				}
-
-				// Update current slide
-				currentCard = num;
 			}
 
 			// Control Buttons
@@ -268,7 +277,7 @@ var Deck = function(selector, options) {
 		}
 	};
 
-	$.fn.slot = function(pos, ease) {
+	$.fn.slot = function(pos, ease, callback) {
 		var self = $(this),
 			transform = '';
 
@@ -285,13 +294,20 @@ var Deck = function(selector, options) {
 		}
 
 		// Prevent duplicates
-		$(defaults.cards+'.'+pos).removeClass(pos);
+		$(defaults.cards+'.'+pos).unslot(pos, false);
 
 		self.removeClass('current last next')
 			.addClass(pos).css({ 
 				'-webkit-transform' : transform,
 				'-webkit-transition' : ( ease ) ? defaults.transition : ''
 			});
+
+		if ( typeof callback != 'undefined' ) {
+			var delay = ( ease ) ? defaults.ease : 0;
+			window.setTimeout(function(){
+				callback();
+			}, delay*1000);
+		}
 	};
 
 	$.fn.unslot = function(pos, ease) {
