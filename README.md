@@ -12,3 +12,4 @@ To Do
 
 1.  Consolidate one animate function for everything (dX)
 2.  Proportional scaling and overlay opacity to dX
+3.  Fix flash of cards during advances

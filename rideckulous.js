@@ -10,7 +10,7 @@ var Deck = function(selector, options) {
 		lastSlide = 0,
 		progression = 0;
 
-	// Cards
+	// Card Handles
 	var $cc = $lc = $nc = [];
 
 	// Swiping
@@ -20,31 +20,44 @@ var Deck = function(selector, options) {
 		endX : 0
 	};
 
-	// Defaults
-	var defaults = {
+	// settings: Can be overwrote by options parameters
+	var settings = {
 		ease : 0.2,
-		shrink : 0.96,
+		shrink : 0.95,
 		sensitivity : 4,
 		cards : '.page',
-		controls : '.control'
+		controls : '.control',
+		backgroundColor : '#cccccc',
+		overlayOpacity : 0.4
 	};
 
 	/*------- Initialization -------*/
 	
 	var el = selector,
 		$parent = $(el),
-		$cards, $controls;
+		$cards, $controls, $overlay, $background;
 	
 	/*------- Methods -------*/
 
 	var init = function(options) {
 		// Options
-		defaults = $.extend(defaults, options || {});
+		settings = $.extend(settings, options || {});
 
 		// Initialize values
-		defaults.transition = 'all '+defaults.ease+'s ease-out';
-		$cards = $(defaults.cards, el);
-		$controls = $(defaults.controls);
+		settings.transition = 'all '+settings.ease+'s ease-out';
+		$cards = $(settings.cards, el);
+		$controls = $(settings.controls);
+
+		// Inject overlay and backing
+		var cardType = $cards.prop('tagName');
+		$overlay = $(document.createElement(cardType)).attr({
+			'class' : 'overlay',
+			'style' : 'position:absolute;width:100%;height:100%;z-index:96;background:rgba(0,0,0,'+settings.overlayOpacity+');'
+		}).appendTo(el);
+		$background = $(document.createElement(cardType)).attr({
+			'class' : 'backing',
+			'style' : 'position:absolute;width:100%;height:100%;z-index:90;background:'+settings.backgroundColor+';'
+		}).appendTo(el);
 
 		// Assign Ids to the cards
 		numSlides = $cards.length;
@@ -158,7 +171,7 @@ var Deck = function(selector, options) {
 		e.preventDefault();
 
 		var moved = swipe.endX - swipe.startX,
-			threshold = viewportWidth/defaults.sensitivity;
+			threshold = viewportWidth/settings.sensitivity;
 
 		goTo = currentCard;
 
@@ -185,7 +198,10 @@ var Deck = function(selector, options) {
 			// animate actual card
 			$cc.transform('translate3d('+dX+'px,0,0)', false);
 			// scale next card
-			$nc.transform('scale('+(defaults.shrink-progression)+')', false);
+			$nc.transform('scale('+(settings.shrink-progression)+')', false);
+			// overlay opacity
+			console.log(dX/viewportWidth);
+			$overlay.css({ 'opacity' : 1+dX/viewportWidth });
 		} else {
 			// lock other card in place
 			$cc.transform('translate3d(0,0,0) scale('+(1-progression)+')', false);
@@ -206,9 +222,9 @@ var Deck = function(selector, options) {
 				$cc.slot('current', true);
 				$lc.slot('last', true);
 			} else {
-				var $go = $(defaults.cards+'[data-id='+num+']'),
-					$before = $(defaults.cards+'[data-id='+(num-1)+']'),
-					$after = $(defaults.cards+'[data-id='+(num+1)+']');
+				var $go = $(settings.cards+'[data-id='+num+']'),
+					$before = $(settings.cards+'[data-id='+(num-1)+']'),
+					$after = $(settings.cards+'[data-id='+(num+1)+']');
 
 				// Are we REALLY jumping?
 				if ( diff >= 2 ) {  // Yes
@@ -245,8 +261,8 @@ var Deck = function(selector, options) {
 	},
 
 	updateControls = function() {
-		var $prevCtrl = $(defaults.controls+'[data-action=prev]'),
-			$nextCtrl = $(defaults.controls+'[data-action=next]');
+		var $prevCtrl = $(settings.controls+'[data-action=prev]'),
+			$nextCtrl = $(settings.controls+'[data-action=next]');
 
 		if ( currentCard >= 0 && currentCard < numSlides ) {
 			$controls.show();
@@ -268,13 +284,13 @@ var Deck = function(selector, options) {
 		// Momentum Effect or Not
 		self.css({ 
 			'-webkit-transform' : transform,
-			'-webkit-transition' : ( ease ) ? defaults.transition : ''
+			'-webkit-transition' : ( ease ) ? settings.transition : ''
 		});
 
 		// Allow animating again
 		if ( typeof callback != 'undefined' ) {
 			animating = true;
-			var delay = ( ease ) ? defaults.ease : 0;
+			var delay = ( ease ) ? settings.ease : 0;
 			window.setTimeout(function(){
 				animating = false;
 				callback();
@@ -295,11 +311,11 @@ var Deck = function(selector, options) {
 		} else if ( pos == 'last' ) {
 			transform = 'translate3d('+-viewportWidth+'px,0,0) scale(1)';
 		} else if ( pos == 'next' ) {
-			transform = 'translate3d(0,0,0) scale('+defaults.shrink+')';
+			transform = 'translate3d(0,0,0) scale('+settings.shrink+')';
 		}
 
 		// Prevent duplicates
-		$(defaults.cards+'.'+pos).unslot(pos, false);
+		$(settings.cards+'.'+pos).unslot(pos, false);
 
 		self.removeClass('current last next')
 			.addClass(pos)
@@ -314,8 +330,8 @@ var Deck = function(selector, options) {
 		if ( self.length == 0 ) return;
 
 		self.removeClass(pos).css({ 
-			'-webkit-transform' : 'translate3d(0,0,0) scale('+defaults.shrink+')',
-			'-webkit-transition' : ( ease ) ? defaults.transition : ''
+			'-webkit-transform' : 'translate3d(0,0,0) scale('+settings.shrink+')',
+			'-webkit-transition' : ( ease ) ? settings.transition : ''
 		});
 	};
 
