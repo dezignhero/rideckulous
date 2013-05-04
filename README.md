@@ -5,3 +5,10 @@ Simple script for transforming pages/slides into a deck of cards.  To advance, y
 
 Written for webkit based browsers.
 Requires jQuery or Zepto.
+
+
+To Do
+=====
+
+1.  Consolidate one animate function for everything (dX)
+2.  Proportional scaling and overlay opacity to dX

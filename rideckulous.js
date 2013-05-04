@@ -24,7 +24,7 @@ var Deck = function(selector, options) {
 	var defaults = {
 		ease : 0.2,
 		shrink : 0.96,
-		sensitivity : 5,
+		sensitivity : 4,
 		cards : '.page',
 		controls : '.control'
 	};
@@ -52,16 +52,15 @@ var Deck = function(selector, options) {
 			var self = $(this);
 
 			self.attr('data-id', i);
-			// .css({'-webkit-transition' : 'all '+defaults.ease+'s ease-out'});
 			
 			// Add initial class
 			if ( i == 0 ) {
 				$cc = self;
-				$cc.slot('current');
+				$cc.slot('current', false);
 			}
 			if ( i == 1 ) {
 				$nc = self;
-				$nc.slot('next');
+				$nc.slot('next', false);
 			}
 		});
 
@@ -164,10 +163,12 @@ var Deck = function(selector, options) {
 		goTo = currentCard;
 
 		// Figure out closest slide
-		if ( moved > threshold && currentCard > 0 ) {
-			goTo--;
-		} else if ( moved < -threshold && currentCard < numSlides-1 ) {
-			goTo++;
+		if ( Math.abs(moved) > threshold ) {
+			if ( moved > 0 && currentCard > 0 ) {
+				goTo--;
+			} else if ( moved < 0 && currentCard < numSlides-1 ) {
+				goTo++;
+			}
 		}
 
 		// Jump to closest
@@ -201,9 +202,7 @@ var Deck = function(selector, options) {
 
 		// Allow animating again
 		if ( ease != 'none' ) {
-			animating = true;
 			window.setTimeout(function(){
-				animating = false;
 
 				if ( typeof callback != 'undefined' ) {
 					callback();
@@ -221,8 +220,8 @@ var Deck = function(selector, options) {
 
 			// Determine how to move slides
 			if ( diff == 0 ) {
-				animate($cc, 0, true);
-				animate($lc, -viewportWidth, true);
+				$cc.slot('current', true);
+				$lc.slot('last', true);
 			} else {
 				var $go = $(defaults.cards+'[data-id='+num+']'),
 					$before = $(defaults.cards+'[data-id='+(num-1)+']'),
@@ -232,6 +231,7 @@ var Deck = function(selector, options) {
 				if ( diff >= 2 ) {  // Yes
 					// Determine where to start from
 					var startPos = ( num > currentCard ) ? 'next' : 'last';
+
 					// Shuffle cards into correct positions
 					$go.slot(startPos, false, function(){
 						$go.slot('current', true, function(){
@@ -277,6 +277,28 @@ var Deck = function(selector, options) {
 		}
 	};
 
+	$.fn.transform = function(transform, ease, callback) {
+		var self = $(this);
+		// Check if card exists
+		if ( self.length == 0 ) return false;
+
+		// Momentum Effect or Not
+		self.css({ 
+			'-webkit-transform' : transform,
+			'-webkit-transition' : ( ease ) ? defaults.transition : ''
+		});
+
+		// Allow animating again
+		if ( typeof callback != 'undefined' ) {
+			animating = true;
+			var delay = ( ease ) ? defaults.ease : 0;
+			window.setTimeout(function(){
+				animating = false;
+				callback();
+			}, delay*1000);
+		}
+	};
+
 	$.fn.slot = function(pos, ease, callback) {
 		var self = $(this),
 			transform = '';
@@ -297,17 +319,8 @@ var Deck = function(selector, options) {
 		$(defaults.cards+'.'+pos).unslot(pos, false);
 
 		self.removeClass('current last next')
-			.addClass(pos).css({ 
-				'-webkit-transform' : transform,
-				'-webkit-transition' : ( ease ) ? defaults.transition : ''
-			});
-
-		if ( typeof callback != 'undefined' ) {
-			var delay = ( ease ) ? defaults.ease : 0;
-			window.setTimeout(function(){
-				callback();
-			}, delay*1000);
-		}
+			.addClass(pos)
+			.transform(transform, ease, callback);
 	};
 
 	$.fn.unslot = function(pos, ease) {
