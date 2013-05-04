@@ -24,6 +24,7 @@ var Deck = function(selector, options) {
 	var settings = {
 		cards : '.page',
 		controls : '.control',
+		zIndex : 10,
 		ease : 0.2,
 		shrink : 0.95,
 		sensitivity : 4,
@@ -52,11 +53,11 @@ var Deck = function(selector, options) {
 		var cardType = $cards.prop('tagName');
 		$overlay = $(document.createElement(cardType)).attr({
 			'class' : 'overlay',
-			'style' : 'position:absolute;width:100%;height:100%;z-index:96;background:rgba(0,0,0,'+settings.overlayOpacity+');'
+			'style' : 'position:absolute;width:100%;height:100%;z-index:'+(settings.zIndex+6)+';background:rgba(0,0,0,'+settings.overlayOpacity+');'
 		}).appendTo(el);
 		$background = $(document.createElement(cardType)).attr({
 			'class' : 'backing',
-			'style' : 'position:absolute;width:100%;height:100%;z-index:90;background:'+settings.backgroundColor+';'
+			'style' : 'position:absolute;width:100%;height:100%;z-index:'+settings.zIndex+';background:'+settings.backgroundColor+';'
 		}).appendTo(el);
 
 		// Assign Ids to the cards
@@ -201,9 +202,6 @@ var Deck = function(selector, options) {
 			$cc.transform('translate3d('+dX+'px,0,0)', false);
 			// scale next card
 			$nc.transform('scale('+(settings.shrink-progression)+')', false);
-			// overlay opacity
-			console.log(dX/viewportWidth);
-			$overlay.css({ 'opacity' : 1+dX/viewportWidth });
 		} else {
 			// lock other card in place
 			$cc.transform('translate3d(0,0,0) scale('+(1-progression)+')', false);
@@ -304,7 +302,8 @@ var Deck = function(selector, options) {
 
 	$.fn.slot = function(pos, ease, callback) {
 		var self = $(this),
-			transform = '';
+			transform = '',
+			zIndex = settings.zIndex;
 
 		// Requires valid jQuery object
 		if ( self.length == 0 ) return;
@@ -312,10 +311,13 @@ var Deck = function(selector, options) {
 		// Slot in correct position and scale
 		if ( pos == 'current' ) {
 			transform = 'translate3d(0,0,0) scale(1)';
+			zIndex += 7;
 		} else if ( pos == 'last' ) {
 			transform = 'translate3d('+-viewportWidth+'px,0,0) scale(1)';
+			zIndex += 10;
 		} else if ( pos == 'next' ) {
 			transform = 'translate3d(0,0,0) scale('+settings.shrink+')';
+			zIndex += 1;
 		}
 
 		// Prevent duplicates
@@ -323,6 +325,7 @@ var Deck = function(selector, options) {
 
 		self.removeClass('current last next')
 			.addClass(pos)
+			.css('z-index', zIndex)
 			.transform(transform, ease, callback);
 	};
 
@@ -333,7 +336,8 @@ var Deck = function(selector, options) {
 		// Requires valid jQuery object
 		if ( self.length == 0 ) return;
 
-		self.removeClass(pos).css({ 
+		self.removeClass(pos).css({
+			'z-index' : '',
 			'-webkit-transform' : 'translate3d(0,0,0) scale('+settings.shrink+')',
 			'-webkit-transition' : ( ease ) ? settings.transition : ''
 		});
