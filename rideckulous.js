@@ -145,7 +145,7 @@ var Deck = function(selector, options) {
 			// Prevent default event
 			e.preventDefault();
 			
-			moveTo(dX);
+			animate(dX);
 		}
 	},
 
@@ -175,39 +175,20 @@ var Deck = function(selector, options) {
 		jumpTo(goTo);
 	},
 	
-	moveTo = function(dX) {
-		progression = Math.floor(100 * dX / viewportWidth)/2000;
+	animate = function(dX) {
+		progression = Math.floor(100 * dX / viewportWidth) / 2000;
 		
 		// Choose which way to animate
 		if ( dX <= 0 ) {
 			// lock other card in place
-			animate($lc, -viewportWidth, false);
+			$lc.transform('translate3d('+-viewportWidth+'px,0,0)', false);
 			// animate actual card
-			animate($cc, dX, false);
+			$cc.transform('translate3d('+dX+'px,0,0)', false);
 		} else {
 			// lock other card in place
-			animate($cc, 0, false);
+			$cc.transform('translate3d(0,0,0)', false);
 			// animate actual card
-			animate($lc, dX-viewportWidth, false);
-		}
-	},
-
-	animate = function($card, scrollTo, ease, callback) {
-		// Check if card exists
-		if ( $card.length == 0 ) return false;
-
-		// Momentum Effect or Not
-		$card[0].style.webkitTransition = ( ease ) ? defaults.transition : '';
-		$card[0].style.webkitTransform = 'translate3d('+scrollTo+'px,0,0)';
-
-		// Allow animating again
-		if ( ease != 'none' ) {
-			window.setTimeout(function(){
-
-				if ( typeof callback != 'undefined' ) {
-					callback();
-				}
-			}, ease*1000);
+			$lc.transform('translate3d('+(dX-viewportWidth)+'px,0,0)', false);
 		}
 	},
 
