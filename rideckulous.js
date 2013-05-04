@@ -179,14 +179,16 @@ var Deck = function(selector, options) {
 		progression = Math.floor(100 * dX / viewportWidth) / 2000;
 		
 		// Choose which way to animate
-		if ( dX <= 0 ) {
+		if ( dX <= 0 ) {  // Going to the left
 			// lock other card in place
 			$lc.transform('translate3d('+-viewportWidth+'px,0,0)', false);
 			// animate actual card
 			$cc.transform('translate3d('+dX+'px,0,0)', false);
+			// scale next card
+			$nc.transform('scale('+(defaults.shrink-progression)+')', false);
 		} else {
 			// lock other card in place
-			$cc.transform('translate3d(0,0,0)', false);
+			$cc.transform('translate3d(0,0,0) scale('+(1-progression)+')', false);
 			// animate actual card
 			$lc.transform('translate3d('+(dX-viewportWidth)+'px,0,0)', false);
 		}
