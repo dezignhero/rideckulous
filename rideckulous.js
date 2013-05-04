@@ -22,12 +22,12 @@ var Deck = function(selector, options) {
 
 	// settings: Can be overwrote by options parameters
 	var settings = {
+		cards : '.page',
+		controls : '.control',
 		ease : 0.2,
 		shrink : 0.95,
 		sensitivity : 4,
-		cards : '.page',
-		controls : '.control',
-		backgroundColor : '#cccccc',
+		backgroundColor : '#CCCCCC',
 		overlayOpacity : 0.4
 	};
 
@@ -83,23 +83,25 @@ var Deck = function(selector, options) {
 		// Display controls correctly
 		updateControls();
 
-		// Behavior
-		$controls.on('touchstart, click', function(){
-			var self = $(this),
-				action = self.attr('data-action');
+		// Monitoring controls if they exist
+		if ( $controls.length > 0 ) {
+			$controls.on('touchstart, click', function(){
+				var self = $(this),
+					action = self.attr('data-action');
 
-			// Ensure action defined
-			if ( typeof action != 'undefined' ) return;
+				// Ensure action defined
+				if ( typeof action != 'undefined' ) return;
 
-			if ( action == 'next' && currentCard < numSlides - 1 ) {
-				goTo = currentCard + 1;
-			} else if ( action == 'prev' && currentCard > 0 ) {
-				goTo = currentCard - 1;
-			}
+				if ( action == 'next' && currentCard < numSlides - 1 ) {
+					goTo = currentCard + 1;
+				} else if ( action == 'prev' && currentCard > 0 ) {
+					goTo = currentCard - 1;
+				}
 
-			// Move container
-			jumpTo(goTo);
-		});
+				// Move container
+				jumpTo(goTo);
+			});
+		}
 
 		// Swiping
 		$parent[0].addEventListener('touchstart', function(e) { touchStart(e); }, false);
@@ -261,6 +263,8 @@ var Deck = function(selector, options) {
 	},
 
 	updateControls = function() {
+		if ( $controls.length == 0 ) return;
+
 		var $prevCtrl = $(settings.controls+'[data-action=prev]'),
 			$nextCtrl = $(settings.controls+'[data-action=next]');
 
