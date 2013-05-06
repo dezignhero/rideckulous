@@ -8,7 +8,8 @@ var Deck = function(selector, options) {
 		goTo = 0,
 		currentCard = 0,
 		lastSlide = 0,
-		progression = 0;
+		progression = 0,
+		orientation = 0;
 
 	// Card Handles
 	var $cc = $lc = $nc = [];
@@ -113,14 +114,23 @@ var Deck = function(selector, options) {
 		$parent[0].addEventListener('mousemove', function(e) { if ( e.which==1) { touchMove(e); } }, false);
 		$parent[0].addEventListener('mouseup', function(e) { touchEnd(e); }, false);
 
+		// Check if Android
+		var ua = navigator.userAgent.toLowerCase(),
+			isAndroid = ua.indexOf("android") > -1;
+
 		// Orientation Change
 		var supportsOrientationChange = "onorientationchange" in window,
-			orientationEvent = supportsOrientationChange ? "orientationchange" : "resize";
+			orientationEvent = (supportsOrientationChange && !isAndroid) ? "orientationchange" : "resize";
 
+		// Listener for orientation changes
 		window.addEventListener(orientationEvent, function() {
-			resize(function(){
-				jumpTo(currentCard);
-			});
+			// Prevent 'fake' orientation calls
+			if ( orientation != window.orientation ) {
+				orientation = window.orientation;
+				resize(true, function(){
+					jumpToSlide(currentSlide, true);
+				});
+			}
 		}, false);
 	},
 
