@@ -18,7 +18,8 @@ var Deck = function(selector, options) {
 	var swipe = {
 		started : false,
 		startX : 0,
-		endX : 0
+		endX : 0,
+		strength : 0
 	};
 
 	// settings: Can be overwrote by options parameters
@@ -26,9 +27,10 @@ var Deck = function(selector, options) {
 		cards : '.page',
 		controls : '.control',
 		zIndex : 10,
-		ease : 0.2,
+		ease : 0.25,
 		shrink : 0.95,
 		sensitivity : 4,
+		swipeMin : 40,
 		backgroundColor : '#CCCCCC',
 		overlayOpacity : 0.4
 	};
@@ -163,6 +165,7 @@ var Deck = function(selector, options) {
 				dX = touchX - swipe.startX,
 				dY = touchY - swipe.startY;
 			
+			swipe.strength = Math.abs(touchX - swipe.endX);
 			swipe.endX = touchX;
 			
 			// Escape if motion wrong
@@ -184,12 +187,12 @@ var Deck = function(selector, options) {
 		e.preventDefault();
 
 		var moved = swipe.endX - swipe.startX,
-			threshold = viewportWidth/settings.sensitivity;
+			threshold = viewportWidth / settings.sensitivity;
 
 		goTo = currentCard;
 
 		// Figure out closest slide
-		if ( Math.abs(moved) > threshold ) {
+		if ( Math.abs(moved) > threshold || swipe.strength > settings.swipeMin ) {
 			if ( moved > 0 && currentCard > 0 ) {
 				goTo--;
 			} else if ( moved < 0 && currentCard < numSlides-1 ) {
