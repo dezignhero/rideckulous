@@ -153,9 +153,7 @@ var Deck = function(selector, options) {
 		swipe.endX = swipe.startX;  // prevent click swiping when touchMove doesn't fire
 
 		// Initiate card references
-		$cc = $($cards.selector+'.current');
-		$lc = $($cards.selector+'.last');
-		$nc = $($cards.selector+'.next');
+		assignCards();
 	},
 	
 	touchMove = function(e) {
@@ -235,6 +233,12 @@ var Deck = function(selector, options) {
 		}
 	},
 
+	assignCards = function() {
+		$cc = $($cards.selector+'.current');
+		$lc = $($cards.selector+'.last');
+		$nc = $($cards.selector+'.next');
+	},
+
 	jumpTo = function(num) {
 		// Keep within range
 		if ( num >= 0 && num < numSlides ) {
@@ -242,10 +246,14 @@ var Deck = function(selector, options) {
 			// How far away is the new card?
 			var diff = Math.abs( num - currentCard );
 
+			// Reassign card references
+			assignCards();
+
 			// Determine how to move slides
 			if ( diff == 0 ) {
 				$cc.slot('current', true);
 				$lc.slot('last', true);
+				$nc.slot('next', true);
 			} else {
 				var $go = $(settings.cards+'[data-id='+num+']'),
 					$before = $(settings.cards+'[data-id='+(num-1)+']'),
@@ -369,8 +377,8 @@ var Deck = function(selector, options) {
 		// Requires valid jQuery object
 		if ( self.length == 0 ) return;
 
-		self.removeClass(pos).css({
-			'z-index' : '',
+		self.css({
+			'z-index' : settings.zIndex,
 			'-webkit-transform' : 'translate3d(0,0,0) scale('+settings.shrink+')',
 			'-webkit-transition' : ( ease ) ? settings.transition : ''
 		});
