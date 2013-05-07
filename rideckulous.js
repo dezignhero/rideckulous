@@ -264,17 +264,24 @@ var Deck = function(selector, options) {
 					// Determine where to start from
 					var startPos = ( num > currentCard ) ? 'next' : 'last';
 
+					// Need to animate $cc reveal if card is below
+					if ( num > currentCard ) {
+						$cc.slot('last', true);
+					}
+
 					// Shuffle cards into correct positions
 					$go.slot(startPos, false, function(){
 						$go.slot('current', true, function(){
 							$before.slot('last', false);
 							$after.slot('next', false);
+							
 							// Update current slide
 							currentCard = num;
 						});	
 					});
 				} else {  // Locking in place
 					$go.slot('current', true);
+
 					// Going to card is below current card
 					if ( num > currentCard ) {
 						$after.slot('next', true);
@@ -283,6 +290,7 @@ var Deck = function(selector, options) {
 						$before.slot('last', true);
 						$after.slot('next', true);
 					}
+
 					// Update current slide
 					currentCard = num;
 				}
