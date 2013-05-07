@@ -377,7 +377,7 @@ var Deck = function(selector, options) {
 		// Requires valid jQuery object
 		if ( self.length == 0 ) return;
 
-		self.css({
+		self.removeClass(pos).css({
 			'z-index' : settings.zIndex,
 			'-webkit-transform' : 'translate3d(0,0,0) scale('+settings.shrink+')',
 			'-webkit-transition' : ( ease ) ? settings.transition : ''
