@@ -8,4 +8,4 @@ Simple script for transforming pages/slides into a deck of cards.  To advance, y
 To Do
 =====
 
-1.  When jumping to last card, doesn't have proper sliding transition.
+1.  Injecting cards and reindexing
