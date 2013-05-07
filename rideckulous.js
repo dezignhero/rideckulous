@@ -281,7 +281,11 @@ var Deck = function(selector, options) {
 			}
 
 			// Reset overlay z-index
-			$overlay.css('z-index', settings.zIndex+6);
+			$overlay.css({
+				'-webkit-transition' : settings.transition,
+				'opacity' : settings.overlayOpacity,
+				'z-index' : settings.zIndex+6
+			});
 
 			// Control Buttons
 			updateControls();
@@ -355,6 +359,7 @@ var Deck = function(selector, options) {
 			.addClass(pos)
 			.css('z-index', zIndex)
 			.transform(transform, ease, callback);
+
 	};
 
 	$.fn.unslot = function(pos, ease) {
