@@ -4,7 +4,7 @@ var Deck = function(selector, options) {
 
 	var viewportWidth = 0,
 		animating = false,
-		numSlides = 0,
+		numCards = 0,
 		goTo = 0,
 		currentCard = 0,
 		lastSlide = 0,
@@ -64,7 +64,7 @@ var Deck = function(selector, options) {
 		}).appendTo(el);
 
 		// Assign Ids to the cards
-		numSlides = $cards.length;
+		numCards = $cards.length;
 		$cards.each(function(i){
 			var self = $(this);
 
@@ -96,7 +96,7 @@ var Deck = function(selector, options) {
 				// Ensure action defined
 				if ( typeof action != 'undefined' ) return;
 
-				if ( action == 'next' && currentCard < numSlides - 1 ) {
+				if ( action == 'next' && currentCard < numCards - 1 ) {
 					goTo = currentCard + 1;
 				} else if ( action == 'prev' && currentCard > 0 ) {
 					goTo = currentCard - 1;
@@ -193,7 +193,7 @@ var Deck = function(selector, options) {
 		if ( Math.abs(moved) > threshold || swipe.strength > settings.swipeMin ) {
 			if ( moved > 0 && currentCard > 0 ) {
 				goTo--;
-			} else if ( moved < 0 && currentCard < numSlides-1 ) {
+			} else if ( moved < 0 && currentCard < numCards-1 ) {
 				goTo++;
 			}
 		}
@@ -241,7 +241,7 @@ var Deck = function(selector, options) {
 
 	jumpTo = function(num) {
 		// Keep within range
-		if ( num >= 0 && num < numSlides ) {
+		if ( num >= 0 && num < numCards ) {
 
 			// How far away is the new card?
 			var diff = Math.abs( num - currentCard );
@@ -296,7 +296,7 @@ var Deck = function(selector, options) {
 				}
 
 				// Update parent to trigger update event and pass data
-				$parent.trigger('update', [ currentCard ]);
+				$parent.trigger('update', [ num+1, numCards ]);
 			}
 
 			// Reset overlay z-index
@@ -317,11 +317,11 @@ var Deck = function(selector, options) {
 		var $prevCtrl = $(settings.controls+'[data-action=prev]'),
 			$nextCtrl = $(settings.controls+'[data-action=next]');
 
-		if ( currentCard >= 0 && currentCard < numSlides ) {
+		if ( currentCard >= 0 && currentCard < numCards ) {
 			$controls.show();
 			if ( currentCard == 0 ) {
 				$prevCtrl.hide();
-			} else if ( currentCard == numSlides-1 ) {
+			} else if ( currentCard == numCards-1 ) {
 				$nextCtrl.hide();
 			}	
 		} else {
@@ -404,11 +404,14 @@ var Deck = function(selector, options) {
 
 		jumpTo : jumpTo,
 
-		current : function() {
-			return currentCard+1;
+		status : function() {
+			return {
+				'current' : currentCard+1,
+				'total' : numCards
+			}
 		},
 
-		total : numSlides,
+		total : numCards,
 
 		next : function() {
 			jumpTo(currentCard+1);

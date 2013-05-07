@@ -34,8 +34,8 @@
 		d = new Deck('#Pages');
 
 		// Bind to d parent
-		d.element.on('update', function(e, page) {
-			console.log(page);
+		d.element.on('update', function(e, current, total) {
+			console.log('Card '+current+' of '+total);
 		});
 	});
 </script>
