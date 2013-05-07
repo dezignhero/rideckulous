@@ -9,3 +9,5 @@ To Do
 =====
 
 1.  Injecting cards and reindexing
+2.  Stagger on right side
+3.  Consolidate jumpTo() cases

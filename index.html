@@ -32,6 +32,11 @@
 	$(document).ready(function(){
 		// Initial deck
 		d = new Deck('#Pages');
+
+		// Bind to d parent
+		d.element.on('update', function(e, page) {
+			console.log(page);
+		});
 	});
 </script>
 </body>

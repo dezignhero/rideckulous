@@ -140,7 +140,7 @@ var Deck = function(selector, options) {
 		viewportWidth = $parent.width();
 
 		// callback
-		if ( typeof callback != 'undefined') {
+		if ( typeof callback == 'function' ) {
 			callback();
 		}
 	},
@@ -277,7 +277,7 @@ var Deck = function(selector, options) {
 							
 							// Update current slide
 							currentCard = num;
-						});	
+						});
 					});
 				} else {  // Locking in place
 					$go.slot('current', true);
@@ -294,6 +294,9 @@ var Deck = function(selector, options) {
 					// Update current slide
 					currentCard = num;
 				}
+
+				// Update parent to trigger update event and pass data
+				$parent.trigger('update', [ currentCard ]);
 			}
 
 			// Reset overlay z-index
@@ -338,7 +341,7 @@ var Deck = function(selector, options) {
 		});
 
 		// Allow animating again
-		if ( typeof callback != 'undefined' ) {
+		if ( typeof callback == 'function' ) {
 			animating = true;
 			var delay = ( ease ) ? settings.ease : 0;
 			window.setTimeout(function(){
