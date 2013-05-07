@@ -411,8 +411,6 @@ var Deck = function(selector, options) {
 			}
 		},
 
-		total : numCards,
-
 		next : function() {
 			jumpTo(currentCard+1);
 		},
