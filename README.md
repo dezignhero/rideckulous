@@ -10,6 +10,5 @@ Requires jQuery or Zepto.
 To Do
 =====
 
-1.  Consolidate one animate function for everything (dX)
-2.  Proportional scaling and overlay opacity to dX
-3.  Fix flash of cards during advances
+1.  Fix flash of cards during advances
+2.  jumpTo(4) twice in a row breaks the slider

@@ -32,7 +32,7 @@ var Deck = function(selector, options) {
 		sensitivity : 4,
 		swipeMin : 40,
 		backgroundColor : '#CCCCCC',
-		overlayOpacity : 0.4
+		overlayOpacity : 0.5
 	};
 
 	/*------- Initialization -------*/
@@ -215,11 +215,23 @@ var Deck = function(selector, options) {
 			$cc.transform('translate3d('+dX+'px,0,0)', false);
 			// scale next card
 			$nc.transform('scale('+(settings.shrink-progression)+')', false);
+			// overlay adjustment
+			$overlay.css({
+				'opacity' : settings.overlayOpacity * (1 + dX/viewportWidth),
+				'z-index' : settings.zIndex+6,
+				'-webkit-transition' : ''
+			});
 		} else {
 			// lock other card in place
 			$cc.transform('translate3d(0,0,0) scale('+(1-progression)+')', false);
 			// animate actual card
 			$lc.transform('translate3d('+(dX-viewportWidth)+'px,0,0)', false);
+			// overlay adjustment
+			$overlay.css({
+				'opacity' : Math.min(settings.overlayOpacity, settings.overlayOpacity * dX/viewportWidth + 0.1),
+				'z-index' : settings.zIndex+8,
+				'-webkit-transition' : ''
+			});
 		}
 	},
 
@@ -267,6 +279,9 @@ var Deck = function(selector, options) {
 					currentCard = num;
 				}
 			}
+
+			// Reset overlay z-index
+			$overlay.css('z-index', settings.zIndex+6);
 
 			// Control Buttons
 			updateControls();
