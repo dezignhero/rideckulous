@@ -277,10 +277,10 @@ var Deck = function(selector, options) {
 					$go.slot('current', true);
 					// Going to card is below current card
 					if ( num > currentCard ) {
-						$after.slot('next', false);
+						$after.slot('next', true);
 						$before.slot('last', true);
 					} else {
-						$before.slot('last', false);
+						$before.slot('last', true);
 						$after.slot('next', true);
 					}
 					// Update current slide
