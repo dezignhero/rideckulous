@@ -24,6 +24,7 @@ var Deck = function(selector, options) {
 
 	// settings: Can be overwrote by options parameters
 	var settings = {
+		peek : 0,
 		cards : '.page',
 		controls : '.control',
 		zIndex : 10,
@@ -125,12 +126,12 @@ var Deck = function(selector, options) {
 			orientationEvent = (supportsOrientationChange && !isAndroid) ? "orientationchange" : "resize";
 
 		// Listener for orientation changes
-		window.addEventListener(orientationEvent, function() {
+		window.addEventListener(orientationEvent, function(){
 			// Prevent 'fake' orientation calls
 			if ( orientation != window.orientation ) {
 				orientation = window.orientation;
-				resize(true, function(){
-					jumpToSlide(currentSlide, true);
+				resize(function(){
+					jumpTo(currentCard);
 				});
 			}
 		}, false);
@@ -138,6 +139,9 @@ var Deck = function(selector, options) {
 
 	resize = function(callback){
 		viewportWidth = $parent.width();
+
+		// Apply new width
+		$cards.width(viewportWidth);
 
 		// callback
 		if ( typeof callback == 'function' ) {
@@ -403,6 +407,8 @@ var Deck = function(selector, options) {
 		element : $parent,
 
 		jumpTo : jumpTo,
+
+		resize : resize,
 
 		status : function() {
 			return {

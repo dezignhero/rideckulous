@@ -31,7 +31,7 @@
 
 	$(document).ready(function(){
 		// Initial deck
-		d = new Deck('#Pages');
+		d = new Deck('#Pages', { 'peek' : 20 });
 
 		// Bind to d parent
 		d.element.on('update', function(e, current, total) {
