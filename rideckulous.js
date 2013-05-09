@@ -161,6 +161,9 @@ var Deck = function(selector, options) {
 	},
 	
 	touchMove = function(e) {
+		// Prevent default event and page bounce
+		e.preventDefault();
+
 		if ( swipe.started ) {
 			var touchX = e.touches ? e.touches[0].pageX : e.pageX,
 				touchY = e.touches ? e.touches[0].pageY : e.pageY,
@@ -172,9 +175,6 @@ var Deck = function(selector, options) {
 			
 			// Escape if motion wrong
 			if ( Math.abs(dX) < Math.abs(dY) ) return true;
-
-			// Prevent default event
-			e.preventDefault();
 			
 			animate(dX);
 		}
