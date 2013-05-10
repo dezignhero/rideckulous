@@ -33,7 +33,8 @@ var Deck = function(selector, options) {
 		sensitivity : 4,
 		swipeMin : 40,
 		backgroundColor : '#CCCCCC',
-		overlayOpacity : 0.5
+		overlayOpacity : 0.5,
+		clickEvent : 'click'
 	};
 
 	/*------- Initialization -------*/
@@ -90,7 +91,11 @@ var Deck = function(selector, options) {
 
 		// Monitoring controls if they exist
 		if ( $controls.length > 0 ) {
-			$controls.on('touchstart, click', function(){
+			// Determine whether or not to use click event
+			if ('ontouchstart' in document.documentElement) {
+				settings.clickEvent = 'touchstart';
+			}
+			$controls.on(settings.clickEvent, function(){
 				var self = $(this),
 					action = self.attr('data-action');
 
