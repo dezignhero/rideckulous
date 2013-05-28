@@ -24,7 +24,6 @@ var Deck = function(selector, options) {
 
 	// settings: Can be overwrote by options parameters
 	var settings = {
-		peek : 0,
 		cards : '.page',
 		controls : '.control',
 		zIndex : 10,
