@@ -33,7 +33,7 @@ var Deck = function(selector, options) {
 		swipeMin : 40,
 		backgroundColor : '#CCCCCC',
 		overlayOpacity : 0.5,
-		clickEvent : 'click'
+		fullWidth : true
 	};
 
 	/*------- Initialization -------*/
@@ -91,7 +91,7 @@ var Deck = function(selector, options) {
 		// Monitoring controls if they exist
 		if ( $controls.length > 0 ) {
 			// Determine whether or not to use click event
-			settings.clickEvent = ('ontouchstart' in document.documentElement) ? 'touchstart' : settings.clickEvent;
+			settings.clickEvent = ('ontouchstart' in document.documentElement) ? 'touchstart' : 'click';
 
 			$controls.on(settings.clickEvent, function(){
 				var self = $(this),
@@ -153,8 +153,10 @@ var Deck = function(selector, options) {
 	resize = function(callback){
 		viewportWidth = $parent.width();
 
-		// Apply new width
-		$cards.width(viewportWidth);
+		if ( settings.fullWidth ) {
+			// Apply new width
+			$cards.width(viewportWidth);
+		}
 
 		// callback
 		if ( typeof callback == 'function' ) {
