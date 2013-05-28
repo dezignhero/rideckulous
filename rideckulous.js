@@ -33,7 +33,8 @@ var Deck = function(selector, options) {
 		swipeMin : 40,
 		backgroundColor : '#CCCCCC',
 		overlayOpacity : 0.5,
-		fullWidth : true
+		fullWidth : true,
+		hash : 'page'
 	};
 
 	/*------- Initialization -------*/
@@ -128,6 +129,14 @@ var Deck = function(selector, options) {
 		// Prevent image dragging on getting in the way
 		$('img', el).on('dragstart', function(){
 			return false;
+		});
+
+		// Jump To Hash
+		jumpToHash();
+
+		// Add this because back button doesn't work on Safari
+		window.addEventListener('hashchange', function() {
+			jumpToHash();
 		});
 
 		// Check if Android
@@ -323,9 +332,22 @@ var Deck = function(selector, options) {
 				'opacity' : settings.overlayOpacity,
 				'z-index' : settings.zIndex+6
 			});
-
+			
+			// Update window location hash
+			window.location.hash = settings.hash+'='+(num+1);
+			
 			// Control Buttons
 			updateControls();
+		}
+	},
+
+	jumpToHash = function() {
+		// Update window location hash
+		var hashes = document.location.hash.split('='),
+			bookmark = ( hashes == '' ) ? 0 : ~~(hashes[1])-1;
+
+		if(bookmark !== currentCard) {
+			jumpTo(bookmark);
 		}
 	},
 
