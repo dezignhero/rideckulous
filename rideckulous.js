@@ -139,6 +139,11 @@ var Deck = function(selector, options) {
 			jumpToHash();
 		});
 
+		// Trigger first event
+		window.setTimeout(function(){
+			$parent.trigger('update', [ currentCard+1, numCards ]);
+		}, settings.ease*1000);
+
 		// Check if Android
 		var ua = navigator.userAgent.toLowerCase(),
 			isAndroid = ua.indexOf("android") > -1;
