@@ -92,9 +92,8 @@ var Deck = function(selector, options) {
 		// Monitoring controls if they exist
 		if ( $controls.length > 0 ) {
 			// Determine whether or not to use click event
-			if ('ontouchstart' in document.documentElement) {
-				settings.clickEvent = 'touchstart';
-			}
+			settings.clickEvent = ('ontouchstart' in document.documentElement) ? 'touchstart' : settings.clickEvent;
+
 			$controls.on(settings.clickEvent, function(){
 				var self = $(this),
 					action = self.attr('data-action');
@@ -121,6 +120,16 @@ var Deck = function(selector, options) {
 		$parent[0].addEventListener('mousedown', function(e) { touchStart(e); }, false);
 		$parent[0].addEventListener('mousemove', function(e) { if ( e.which==1) { touchMove(e); } }, false);
 		$parent[0].addEventListener('mouseup', function(e) { touchEnd(e); }, false);
+
+		// Prevent anchor tags from getting in the way
+		$('a', el).on('touchstart click', function(){
+			return swipe.started ? false : true;
+		});
+
+		// Prevent image dragging on getting in the way
+		$('img', el).on('dragstart', function(){
+			return false;
+		});
 
 		// Check if Android
 		var ua = navigator.userAgent.toLowerCase(),
@@ -155,7 +164,6 @@ var Deck = function(selector, options) {
 	},
 
 	touchStart = function(e) {
-		swipe.started = true;
 		// Get start point
 		swipe.startX = e.touches ? e.touches[0].pageX : e.pageX;
 		swipe.startY = e.touches ? e.touches[0].pageY : e.pageY;
@@ -166,23 +174,23 @@ var Deck = function(selector, options) {
 	},
 	
 	touchMove = function(e) {
+		swipe.started = true;
+		
+		var touchX = e.touches ? e.touches[0].pageX : e.pageX,
+			touchY = e.touches ? e.touches[0].pageY : e.pageY,
+			dX = touchX - swipe.startX,
+			dY = touchY - swipe.startY;
+		
+		swipe.strength = Math.abs(touchX - swipe.endX);
+		swipe.endX = touchX;
+		
+		// Escape if motion wrong
+		if ( Math.abs(dX) < Math.abs(dY) ) return true;
+
 		// Prevent default event and page bounce
 		e.preventDefault();
-
-		if ( swipe.started ) {
-			var touchX = e.touches ? e.touches[0].pageX : e.pageX,
-				touchY = e.touches ? e.touches[0].pageY : e.pageY,
-				dX = touchX - swipe.startX,
-				dY = touchY - swipe.startY;
-			
-			swipe.strength = Math.abs(touchX - swipe.endX);
-			swipe.endX = touchX;
-			
-			// Escape if motion wrong
-			if ( Math.abs(dX) < Math.abs(dY) ) return true;
-			
-			animate(dX);
-		}
+		
+		animate(dX);
 	},
 
 	touchEnd = function(e) {
