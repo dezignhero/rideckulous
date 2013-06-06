@@ -2,14 +2,16 @@ var Deck = function(selector, options) {
 
 	/*------- Globals -------*/
 
-	var viewportWidth = 0,
+	var initialized = false,
+		viewportWidth = 0,
 		animating = false,
 		numCards = 0,
 		goTo = 0,
 		currentCard = 0,
 		lastSlide = 0,
 		progression = 0,
-		orientation = 0;
+		orientation = 0,
+		stash = [];
 
 	// Card Handles
 	var $cc = $lc = $nc = [];
@@ -131,18 +133,10 @@ var Deck = function(selector, options) {
 			return false;
 		});
 
-		// Jump To Hash
-		jumpToHash();
-
 		// Add this because back button doesn't work on Safari
 		window.addEventListener('hashchange', function() {
 			jumpToHash();
 		});
-
-		// Trigger first event
-		window.setTimeout(function(){
-			$parent.trigger('update', [ currentCard+1, numCards ]);
-		}, settings.ease*1000);
 
 		// Check if Android
 		var ua = navigator.userAgent.toLowerCase(),
@@ -162,6 +156,26 @@ var Deck = function(selector, options) {
 				});
 			}
 		}, false);
+
+		// Set initialized flag
+		initalized = true;
+
+		// Execute saved callbacks
+		for ( var i=0, e=stash.length; i<e; i++ ) {
+			var cb = stash.pop();
+			cb();
+		}
+
+		// Jump To Hash
+		jumpToHash();
+	},
+
+	save = function(callback) {
+		if ( initialized == true ) { 
+			callback();
+		} else {
+			stash.push(callback);
+		}
 	},
 
 	resize = function(callback){
@@ -440,10 +454,15 @@ var Deck = function(selector, options) {
 		});
 	};
 
-	// Initialize the object
-	init(options);
-
 	return {
+
+		initialize : function() {
+			init(options);
+		},
+
+		save : function(cb) {
+			save(cb);
+		},
 
 		element : $parent,
 

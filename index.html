@@ -33,10 +33,15 @@
 		// Initial deck
 		d = new Deck('#Pages', { 'peek' : 20 });
 
-		// Bind to d parent
-		d.element.on('update', function(e, current, total) {
-			console.log('Card '+current+' of '+total);
+		// 	Save events to be bound
+		d.save(function(){
+			// Bind to d parent
+			d.element.on('update', function(e, current, total) {
+				console.log('Card '+current+' of '+total);
+			});
 		});
+
+		d.initialize();
 	});
 </script>
 </body>
