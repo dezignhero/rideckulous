@@ -170,7 +170,7 @@ var Deck = function(selector, options) {
 		jumpToHash();
 	},
 
-	save = function(callback) {
+	ready = function(callback) {
 		if ( initialized == true ) { 
 			callback();
 		} else {
@@ -460,8 +460,8 @@ var Deck = function(selector, options) {
 			init(options);
 		},
 
-		save : function(cb) {
-			save(cb);
+		ready : function(cb) {
+			ready(cb);
 		},
 
 		element : $parent,

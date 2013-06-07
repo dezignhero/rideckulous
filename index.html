@@ -34,7 +34,7 @@
 		d = new Deck('#Pages', { 'peek' : 20 });
 
 		// 	Save events to be bound
-		d.save(function(){
+		d.ready(function(){
 			// Bind to d parent
 			d.element.on('update', function(e, current, total) {
 				console.log('Card '+current+' of '+total);
