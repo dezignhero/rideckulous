@@ -353,7 +353,8 @@ var Deck = function(selector, options) {
 			});
 			
 			// Update window location hash
-			window.location.hash = settings.hash+'='+(num+1);
+			num++;
+			window.location.hash = settings.hash+'='+num;
 			
 			// Control Buttons
 			updateControls();
