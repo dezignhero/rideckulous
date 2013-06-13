@@ -342,7 +342,7 @@ var Deck = function(selector, options) {
 				}
 
 				// Update parent to trigger update event and pass data
-				$parent.trigger('update', [ num+1, numCards ]);
+				$parent.trigger('update', [ parseInt(num)+1, numCards ]);
 			}
 
 			// Reset overlay z-index
