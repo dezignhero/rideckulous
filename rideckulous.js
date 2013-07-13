@@ -78,12 +78,11 @@ var Deck = function(selector, options) {
 			if ( i == 0 ) {
 				$cc = self;
 				$cc.slot('current', false);
-			}
-			if ( i == 1 ) {
+			} else if ( i == 1 ) {
 				$nc = self;
 				$nc.slot('next', false);
 			}
-		});
+		}).css({ '-webkit-transform-style':'preserve-3d' });
 
 		// Set Dimensions
 		resize();
