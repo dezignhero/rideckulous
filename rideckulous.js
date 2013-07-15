@@ -56,17 +56,6 @@ var Deck = function(selector, options) {
 		$cards = $(settings.cards, el);
 		$controls = $(settings.controls);
 
-		// Inject overlay and backing
-		var cardType = $cards.prop('tagName');
-		$overlay = $(document.createElement(cardType)).attr({
-			'class' : 'overlay',
-			'style' : 'position:absolute;width:100%;height:100%;z-index:'+(settings.zIndex+6)+';background:rgba(0,0,0,'+settings.overlayOpacity+');'
-		}).appendTo(el);
-		$background = $(document.createElement(cardType)).attr({
-			'class' : 'backing',
-			'style' : 'position:absolute;width:100%;height:100%;z-index:'+settings.zIndex+';background:'+settings.backgroundColor+';'
-		}).appendTo(el);
-
 		// Assign Ids to the cards
 		numCards = $cards.length;
 		$cards.each(function(i){
@@ -83,6 +72,17 @@ var Deck = function(selector, options) {
 				$nc.slot('next', false);
 			}
 		}).css({ '-webkit-transform-style':'preserve-3d' });
+
+		// Inject overlay and backing
+		var cardType = $cards.prop('tagName');
+		$overlay = $(document.createElement(cardType)).attr({
+			'class' : 'overlay',
+			'style' : 'position:absolute;width:100%;height:100%;z-index:'+(settings.zIndex+6)+';background:rgba(0,0,0,'+settings.overlayOpacity+');'
+		}).appendTo(el);
+		$background = $(document.createElement(cardType)).attr({
+			'class' : 'backing',
+			'style' : 'position:absolute;width:100%;height:100%;z-index:'+settings.zIndex+';background:'+settings.backgroundColor+';'
+		}).appendTo(el);
 
 		// Set Dimensions
 		resize();
@@ -119,7 +119,7 @@ var Deck = function(selector, options) {
 		$parent[0].addEventListener('touchend', function(e) { touchEnd(e); }, false);
 		// Desktop
 		$parent[0].addEventListener('mousedown', function(e) { touchStart(e); }, false);
-		$parent[0].addEventListener('mousemove', function(e) { if ( e.which==1) { touchMove(e); } }, false);
+		$parent[0].addEventListener('mousemove', function(e) { if ( e.which==1 ) { touchMove(e); } }, false);
 		$parent[0].addEventListener('mouseup', function(e) { touchEnd(e); }, false);
 
 		// Prevent anchor tags from getting in the way
@@ -248,7 +248,7 @@ var Deck = function(selector, options) {
 	},
 	
 	animate = function(dX) {
-		progression = Math.floor(100 * dX / viewportWidth) / 2000;
+		progression = (dX / viewportWidth / 20).toFixed(4);
 		
 		// Choose which way to animate
 		if ( dX <= 0 ) {  // Going to the left
@@ -401,11 +401,11 @@ var Deck = function(selector, options) {
 		// Allow animating again
 		if ( typeof callback == 'function' ) {
 			animating = true;
-			var delay = ( ease ) ? settings.ease : 0;
+			var delay = ( ease ) ? settings.ease*1000 : 0;
 			window.setTimeout(function(){
 				animating = false;
 				callback();
-			}, delay*1000);
+			}, delay);
 		}
 	};
 
