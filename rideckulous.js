@@ -74,12 +74,12 @@ var Deck = function(selector, options) {
 		}).css({ '-webkit-transform-style':'preserve-3d' });
 
 		// Inject overlay and backing
-		var cardType = $cards.prop('tagName');
-		$overlay = $(document.createElement(cardType)).attr({
+		var cardTag = $cards.prop('tagName');
+		$overlay = $(document.createElement(cardTag)).attr({
 			'class' : 'overlay',
-			'style' : 'position:absolute;width:100%;height:100%;z-index:'+(settings.zIndex+6)+';background:rgba(0,0,0,'+settings.overlayOpacity+');'
+			'style' : 'position:absolute;width:100%;height:100%;-webkit-transform-style:preserve-3d;z-index:'+(settings.zIndex+6)+';background:rgba(0,0,0,'+settings.overlayOpacity+');'
 		}).appendTo(el);
-		$background = $(document.createElement(cardType)).attr({
+		$background = $(document.createElement(cardTag)).attr({
 			'class' : 'backing',
 			'style' : 'position:absolute;width:100%;height:100%;z-index:'+settings.zIndex+';background:'+settings.backgroundColor+';'
 		}).appendTo(el);
