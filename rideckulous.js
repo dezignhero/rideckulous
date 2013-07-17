@@ -463,6 +463,10 @@ var Deck = function(selector, options) {
 			ready(cb);
 		},
 
+		settings : function() {
+			return settings;
+		},
+
 		element : $parent,
 
 		jumpTo : jumpTo,
