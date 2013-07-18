@@ -279,9 +279,10 @@ var Deck = function(selector, options) {
 	},
 
 	assignCards = function() {
-		$cc = $($cards.selector+'.current');
-		$lc = $($cards.selector+'.last');
-		$nc = $($cards.selector+'.next');
+		$cards.hide();
+		$cc = $($cards.selector+'.current').show();
+		$lc = $($cards.selector+'.last').show();
+		$nc = $($cards.selector+'.next').show();
 	},
 
 	jumpTo = function(num) {
@@ -315,7 +316,7 @@ var Deck = function(selector, options) {
 					}
 
 					// Shuffle cards into correct positions
-					$go.slot(startPos, false, function(){
+					$go.show().slot(startPos, false, function(){
 						$go.slot('current', true, function(){
 							$before.slot('last', false);
 							$after.slot('next', false);
@@ -461,10 +462,6 @@ var Deck = function(selector, options) {
 
 		ready : function(cb) {
 			ready(cb);
-		},
-
-		settings : function() {
-			return settings;
 		},
 
 		element : $parent,
