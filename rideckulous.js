@@ -146,6 +146,7 @@ var Deck = function(selector, options) {
 			orientationEvent = (supportsOrientationChange && !isAndroid) ? "orientationchange" : "resize";
 
 		// Listener for orientation changes
+		orientation = window.orientation;
 		window.addEventListener(orientationEvent, function(){
 			// Prevent 'fake' orientation calls
 			if ( orientation != window.orientation ) {
