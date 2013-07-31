@@ -288,6 +288,7 @@ var Deck = function(selector, options) {
 
 	jumpTo = function(num) {
 		// Keep within range
+		num = parseInt(num);
 		if ( num >= 0 && num < numCards ) {
 
 			// How far away is the new card?
